@@ -1,5 +1,6 @@
 import { pool } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
   try {
@@ -29,9 +30,10 @@ export async function POST(request) {
     
     const usuario = usuarios[0];
     
-    // COMPARACIÓN DIRECTA DE CONTRASEÑAS (SIN HASH)
-    // ¡Así de simple para el proyecto!
-    if (password !== usuario.password) {
+    // COMPARAR CONTRASEÑA USANDO BCRYPT
+    const passwordMatch = await bcrypt.compare(password, usuario.password);
+    
+    if (!passwordMatch) {
       return NextResponse.json(
         { success: false, error: 'Credenciales inválidas' },
         { status: 401 }
@@ -41,14 +43,14 @@ export async function POST(request) {
     // No enviar la contraseña en la respuesta
     const { password: _, ...usuarioSinPassword } = usuario;
     
-    // Crear respuesta con cookie simple
+    // Crear respuesta
     const response = NextResponse.json({
       success: true,
       message: 'Login exitoso',
       user: usuarioSinPassword
     });
     
-    // Establecer cookie simple (dura 7 días)
+    // Establecer cookie simple
     response.cookies.set('user_session', JSON.stringify({
       id: usuario.id,
       email: usuario.email,

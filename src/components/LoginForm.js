@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = ({ show, onHide }) => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ const LoginForm = ({ show, onHide }) => {
   const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +24,8 @@ const LoginForm = ({ show, onHide }) => {
       onHide();
       setEmail('');
       setPassword('');
+
+       router.push('/zonaPrivada/miPerfil');
     } else {
       setError(result.error || 'Error al iniciar sesión');
     }
