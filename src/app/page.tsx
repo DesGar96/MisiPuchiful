@@ -22,7 +22,7 @@ export default function Inicio() {
           <Row className="align-items-center min-vh-50">
             <Col lg={6} className="mb-4 mb-lg-0">
               <h1 className="display-3 fw-bold mb-4">
-                Bienvenido a <span className="text-success">Misipuchiful</span>
+                Bienvenido a <span className="text-success">Misipuchiful!!</span>
               </h1>
               <p className="lead text-muted mb-4">
                 Te presento a mis dos compañeros peludos, los cuales son grandes responsables de esta web, se llaman Misifú y Puchi. 
