@@ -23,8 +23,14 @@
   bottom: -40px;
 }
 
+.badge.bg-primary,
+.badge[class*="bg-"] {
+  background-color: #A8E6CF !important;
+  color: #2E7D32 !important;
+}
+
 .carousel-indicators button {
-  background-color: #007bff !important;
+  background-color: #A8E6CF !important;
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -35,8 +41,7 @@
 }
 
 .carousel-indicators button.active {
-  opacity: 1;
-  background-color: #0056b3 !important;
+  background-color: #2E7D32 !important;
   transform: scale(1.2);
 }
 
@@ -75,4 +80,208 @@
     height: 8px;
     margin: 0 4px;
   }
+}
+
+/* Efectos para las cards del blog */
+.hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Estilos para el contenido del blog */
+.blog-content {
+  color: #333;
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+}
+
+.hover\:text-success:hover {
+  color: #28a745 !important;
+  transition: color 0.3s ease;
+}
+
+/* Fuente cálida y legible */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #5D3A1A;
+  background-color: #FEF9E7;
+}
+
+/* Estilos para enlaces */
+a {
+  transition: color 0.3s ease;
+}
+
+/* Estilos para títulos */
+h1, h2, h3, h4, h5, h6 {
+  color: #5D3A1A;
+}
+
+/* Estilos para botones personalizados */
+.btn-custom {
+  background-color: #F39C12;
+  border-color: #F39C12;
+  color: white;
+  border-radius: 30px;
+  padding: 0.5rem 2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #E67E22;
+  border-color: #E67E22;
+  transform: scale(1.05);
+}
+
+/* Responsividad mejorada */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+}
+
+/* Accesibilidad */
+:focus {
+  outline: 3px solid #F39C12;
+  outline-offset: 2px;
+}
+
+/* Colores pastel naturales */
+:root {
+  --verde-pastel: #A8E6CF;
+  --verde-claro: #B5EAD7;
+  --melocoton: #FFD3B6;
+  --coral-pastel: #FFAAA5;
+  --rosa-pastel: #FF8B94;
+  --beige: #F8F6F2;
+  --texto-oscuro: #6B5E4A;
+  --texto-verde: #2E7D32;
+}
+
+/* Fuente cálida y legible */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--texto-oscuro);
+  background-color: var(--beige);
+  line-height: 1.6;
+}
+
+/* Mejorar legibilidad */
+p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--texto-verde);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Responsividad para textos */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+}
+
+/* Accesibilidad - contraste suficiente */
+a, button {
+  transition: all 0.3s ease;
+}
+
+:focus {
+  outline: 3px solid var(--verde-pastel);
+  outline-offset: 2px;
+}
+
+/* Mejorar contraste de textos */
+.text-muted {
+  color: #9E9E9E !important;
+}
+
+/* Estilos para cards */
+.card {
+  border-radius: 25px !important;
+  border: none !important;
+}
+
+/* Estilos para badges */
+.badge {
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+}
+
+/* FUERZA BRUTA - QUITAR TODO EL AZUL */
+a, a:link, a:visited, a:hover, a:active, 
+.nav-link, .nav-link:link, .nav-link:visited,
+.card-title a, .btn-link, .btn-link:link,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+.dropdown-item, .dropdown-item:hover,
+.text-primary, .text-info, .text-blue,
+a.text-primary:hover, a.text-info:hover {
+  color: #2E7D32 !important;
+  text-decoration: none !important;
+}
+
+/* ESPECÍFICO PARA LOS TÍTULOS DEL BLOG */
+.blog-container .card-title a,
+.blog-container h3 a,
+.blog-container .fw-bold a {
+  color: #2E7D32 !important;
+}
+
+/* PARA EL MENÚ LATERAL */
+.blog-container .nav-link.active {
+  color: #2E7D32 !important;
+  font-weight: bold !important;
+  background-color: #E8F5E9 !important;
+}
+
+/* PARA LOS BOTONES LEER */
+.blog-container .btn {
+  background-color: #A8E6CF !important;
+  border-color: #A8E6CF !important;
+  color: #2E7D32 !important;
+}
+
+.blog-container .btn:hover {
+  background-color: #8fd6b9 !important;
+  border-color: #8fd6b9 !important;
+}
+
+/* SOBRESCRIBIR BOOTSTRAP COMPLETAMENTE */
+.btn-outline-primary {
+  color: #2E7D32 !important;
+  border-color: #A8E6CF !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: #A8E6CF !important;
+  color: #2E7D32 !important;
+  border-color: #A8E6CF !important;
 }

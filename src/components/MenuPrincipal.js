@@ -76,13 +76,14 @@ const MenuPrincipal = () => {
             <Form className="d-flex ms-lg-auto me-3" onSubmit={handleSearch}>
               <Form.Control
                 type="search"
-                placeholder="Buscar productos..."
+                placeholder="Buscar..."
                 className="me-2"
                 aria-label="Search"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 style={{ minWidth: '200px' }}
               />
+              
               <Button variant="outline-primary" type="submit">
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
