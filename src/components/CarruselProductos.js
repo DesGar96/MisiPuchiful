@@ -73,7 +73,7 @@ const CarruselProductos = () => {
                       <div className="position-relative">
                         <Card.Img 
                           variant="top" 
-                          src={producto.imagen || 'https://via.placeholder.com/300x200?text=Producto'} 
+                          src={producto.imagen || '/imagenes/placeholder.jpg'} 
                           alt={producto.nombre}
                           style={{ height: '200px', objectFit: 'cover' }}
                         />

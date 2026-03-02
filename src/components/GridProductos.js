@@ -22,7 +22,7 @@ const ProductGrid = () => {
   // Categorías principales (de la BD)
   const categoriasPrincipales = [
     { id: 'todos', nombre: '🐾 Todos los productos', icono: '🐾' },
-    { id: 'Alimentación', nombre: '🍖 Alimentación', icono: '🍖' },
+    { id: 'Alimentacion', nombre: '🍖 Alimentacion', icono: '🍖' },
     { id: 'Juguetes', nombre: '🧸 Juguetes', icono: '🧸' },
     { id: 'Camas y Accesorios', nombre: '🛏️ Camas y Accesorios', icono: '🛏️' },
     { id: 'Higiene', nombre: '🧼 Higiene', icono: '🧼' }
@@ -236,7 +236,7 @@ const ProductGrid = () => {
                         sizes="(max-width: 768px) 100vw, 25vw"
                         style={{ objectFit: 'cover' }}
                       />
-                      {product.es_oferta && (
+                      {product.es_oferta == 1 && (
                         <Badge style={{ 
                           position: 'absolute',
                           top: '15px',
@@ -249,7 +249,7 @@ const ProductGrid = () => {
                           🔥 OFERTA
                         </Badge>
                       )}
-                      {product.es_novedad && (
+                      {product.es_novedad == 1 && (
                         <Badge style={{ 
                           position: 'absolute',
                           top: '15px',

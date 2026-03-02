@@ -1,259 +1,89 @@
 "use client";
 
 import React from 'react';
+import { Modal, Button, ListGroup, Image, Form } from 'react-bootstrap';
 import { useCarrito } from '@/context/CarritoContext';
 import { useRouter } from 'next/navigation';
 
 const CarritoModal = () => {
-  const { 
-    items, 
-    total, 
-    mostrarCarrito, 
-    setMostrarCarrito,
-    eliminarDelCarrito,
-    actualizarCantidad,
-    vaciarCarrito 
-  } = useCarrito();
-  
   const router = useRouter();
-
-  const handleCantidadChange = (productoId, nuevaCantidad) => {
-    actualizarCantidad(productoId, parseInt(nuevaCantidad));
-  };
+  const { mostrarCarrito, setMostrarCarrito, items, eliminarDelCarrito, actualizarCantidad, total } = useCarrito();
 
   const handleFinalizarCompra = () => {
     setMostrarCarrito(false);
-    router.push('/checkout');
+    router.push('/carrito/finalizar');
   };
 
-  if (!mostrarCarrito) return null;
-
   return (
-    <div className="modal-overlay" style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1050
-    }}>
-      <div className="modal-content" style={{
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        width: '90%',
-        maxWidth: '800px',
-        maxHeight: '90vh',
-        overflow: 'auto',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
-      }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '1rem',
-          borderBottom: '1px solid #dee2e6'
-        }}>
-          <h5 style={{ margin: 0, fontWeight: 'bold' }}>Carrito de Compras</h5>
-          <button 
-            onClick={() => setMostrarCarrito(false)}
+    <Modal 
+      show={mostrarCarrito} 
+      onHide={() => setMostrarCarrito(false)} 
+      size="lg" 
+      centered
+      restoreFocus={false}
+    >
+      <Modal.Header closeButton style={{ border: 'none' }}>
+        <Modal.Title style={{ color: '#2E7D32' }}>🛒 Tu Carrito</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {items.length === 0 ? (
+          <p className="text-center" style={{ color: '#6B5E4A' }}>Tu carrito está vacío</p>
+        ) : (
+          <ListGroup variant="flush">
+            {items.map((item) => (
+              <ListGroup.Item key={item.id} className="d-flex align-items-center">
+                <div style={{ width: '60px', height: '60px', position: 'relative', marginRight: '15px' }}>
+                  <Image
+                    src={item.imagen || '/imagenes/placeholder.jpg'}
+                    alt={item.nombre}
+                    fluid
+                    style={{ objectFit: 'cover', borderRadius: '10px', width: '60px', height: '60px' }}
+                  />
+                </div>
+                <div className="flex-grow-1">
+                  <h6 style={{ color: '#2E7D32' }}>{item.nombre}</h6>
+                  <small style={{ color: '#6B5E4A' }}>{item.precio}€</small>
+                </div>
+                <div className="d-flex align-items-center gap-2">
+                  <Form.Control
+                    type="number"
+                    min="1"
+                    value={item.cantidad}
+                    onChange={(e) => actualizarCantidad(item.id, parseInt(e.target.value) || 1)}
+                    style={{ width: '70px', borderRadius: '15px' }}
+                  />
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => eliminarDelCarrito(item.id)}
+                    style={{ borderRadius: '50%' }}
+                  >
+                    ×
+                  </Button>
+                </div>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )}
+      </Modal.Body>
+      {items.length > 0 && (
+        <Modal.Footer style={{ border: 'none' }}>
+          <h5 style={{ color: '#2E7D32' }}>Total: {total.toFixed(2)}€</h5>
+          <Button
             style={{
-              border: 'none',
-              background: 'none',
-              fontSize: '1.5rem',
-              cursor: 'pointer',
-              padding: '0 0.5rem'
+              backgroundColor: '#A8E6CF',
+              borderColor: '#A8E6CF',
+              color: '#2E7D32',
+              borderRadius: '30px',
+              padding: '0.5rem 2rem'
             }}
+            onClick={handleFinalizarCompra}
           >
-            ×
-          </button>
-        </div>
-
-        {/* Body */}
-        <div style={{ padding: '1rem' }}>
-          {items.length === 0 ? (
-            <div style={{
-              padding: '1rem',
-              backgroundColor: '#e7f3ff',
-              color: '#004085',
-              borderRadius: '4px'
-            }}>
-              Tu carrito está vacío. ¡Explora nuestros productos!
-            </div>
-          ) : (
-            <>
-              {/* Lista de productos */}
-              {items.map(item => (
-                <div key={item.id} style={{
-                  padding: '1rem 0',
-                  borderBottom: '1px solid #dee2e6'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem'
-                  }}>
-                    {/* Imagen */}
-                    <div style={{
-                      width: '50px',
-                      height: '50px',
-                      flexShrink: 0
-                    }}>
-                      <img 
-                        src={item.imagen || 'https://via.placeholder.com/50'} 
-                        alt={item.nombre}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          borderRadius: '4px'
-                        }}
-                      />
-                    </div>
-
-                    {/* Contenido */}
-                    <div style={{ flexGrow: 1 }}>
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start'
-                      }}>
-                        <div>
-                          <h6 style={{ margin: '0 0 0.25rem 0' }}>{item.nombre}</h6>
-                          <small style={{ color: '#6c757d' }}>{item.precio} €</small>
-                        </div>
-                        <button 
-                          onClick={() => eliminarDelCarrito(item.id)}
-                          style={{
-                            border: 'none',
-                            background: 'none',
-                            color: '#dc3545',
-                            fontSize: '1.25rem',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-
-                      {/* Cantidad y subtotal */}
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem',
-                        marginTop: '0.5rem'
-                      }}>
-                        <input
-                          type="number"
-                          min="1"
-                          value={item.cantidad}
-                          onChange={(e) => handleCantidadChange(item.id, e.target.value)}
-                          style={{
-                            width: '70px',
-                            padding: '0.375rem',
-                            border: '1px solid #ced4da',
-                            borderRadius: '4px'
-                          }}
-                        />
-                        <span style={{ fontWeight: 'bold' }}>
-                          {(item.precio * item.cantidad).toFixed(2)} €
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* Resumen */}
-              <div style={{ marginTop: '1.5rem' }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '0.5rem'
-                }}>
-                  <span>Subtotal:</span>
-                  <span style={{ fontWeight: 'bold' }}>{total.toFixed(2)} €</span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '0.5rem'
-                }}>
-                  <span>Envío:</span>
-                  <span style={{ color: '#28a745' }}>Gratis</span>
-                </div>
-                <hr style={{ margin: '1rem 0' }} />
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginBottom: '1rem'
-                }}>
-                  <h5 style={{ margin: 0 }}>Total:</h5>
-                  <h5 style={{ margin: 0, color: '#007bff' }}>{total.toFixed(2)} €</h5>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          padding: '1rem',
-          borderTop: '1px solid #dee2e6',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '0.5rem'
-        }}>
-          <button
-            onClick={() => setMostrarCarrito(false)}
-            style={{
-              padding: '0.5rem 1rem',
-              border: '1px solid #6c757d',
-              backgroundColor: 'transparent',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Seguir Comprando
-          </button>
-          
-          {items.length > 0 && (
-            <>
-              <button
-                onClick={vaciarCarrito}
-                style={{
-                  padding: '0.5rem 1rem',
-                  border: '1px solid #dc3545',
-                  backgroundColor: 'transparent',
-                  color: '#dc3545',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Vaciar Carrito
-              </button>
-              <button
-                onClick={handleFinalizarCompra}
-                style={{
-                  padding: '0.5rem 1rem',
-                  border: 'none',
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Finalizar Compra
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
+            Finalizar Compra
+          </Button>
+        </Modal.Footer>
+      )}
+    </Modal>
   );
 };
 

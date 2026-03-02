@@ -76,7 +76,7 @@ export default function PostPage() {
             className="mb-4 rounded-4 overflow-hidden"
           >
             <Image
-              src={post.imagen}
+              src={post.imagen || '/imagenes/blog-placeholder.jpg'}
               alt={post.titulo}
               fill
               style={{ objectFit: "cover" }}

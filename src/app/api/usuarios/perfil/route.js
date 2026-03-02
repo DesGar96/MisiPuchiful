@@ -1,6 +1,7 @@
 import { pool } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcryptjs';
 
 export async function GET() {
   try {
@@ -18,7 +19,9 @@ export async function GET() {
     const usuarioId = sessionData.id;
 
     const [usuarios] = await pool.query(
-      'SELECT id, nombre, email, telefono, direccion, rol FROM usuarios WHERE id = ?',
+      `SELECT id, nombre, email, telefono, direccion, 
+              tipo_via, nombre_via, numero_via, piso, codigo_postal, ciudad, rol 
+       FROM usuarios WHERE id = ?`,
       [usuarioId]
     );
 
@@ -57,12 +60,71 @@ export async function PUT(request) {
 
     const sessionData = JSON.parse(sessionCookie.value);
     const usuarioId = sessionData.id;
-    const { nombre, telefono, direccion } = await request.json();
+    const { 
+      nombre, 
+      telefono, 
+      direccion,
+      tipo_via,
+      nombre_via,
+      numero_via,
+      piso,
+      codigo_postal,
+      ciudad,
+      passwordActual,
+      nuevaPassword 
+    } = await request.json();
 
-    await pool.query(
-      'UPDATE usuarios SET nombre = ?, telefono = ?, direccion = ? WHERE id = ?',
-      [nombre, telefono || null, direccion || null, usuarioId]
+    // Construir dirección completa para el campo legacy
+    const direccionCompleta = direccion || (
+      tipo_via && nombre_via && numero_via 
+        ? `${tipo_via} ${nombre_via}, nº ${numero_via}${piso ? ', ' + piso : ''}, ${codigo_postal ? 'CP: ' + codigo_postal : ''} ${ciudad || ''}`.trim()
+        : null
     );
+
+    // Si se quiere cambiar la contraseña
+    if (passwordActual && nuevaPassword) {
+      // Verificar contraseña actual
+      const [usuarios] = await pool.query(
+        'SELECT password FROM usuarios WHERE id = ?',
+        [usuarioId]
+      );
+
+      const passwordMatch = await bcrypt.compare(passwordActual, usuarios[0].password);
+      
+      if (!passwordMatch) {
+        return NextResponse.json({ 
+          success: false, 
+          error: 'La contraseña actual no es correcta' 
+        }, { status: 400 });
+      }
+
+      // Hashear nueva contraseña
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(nuevaPassword, salt);
+
+      // Actualizar con nueva contraseña
+      await pool.query(
+        `UPDATE usuarios SET 
+         nombre = ?, telefono = ?, direccion = ?,
+         tipo_via = ?, nombre_via = ?, numero_via = ?, 
+         piso = ?, codigo_postal = ?, ciudad = ?,
+         password = ?
+         WHERE id = ?`,
+        [nombre, telefono, direccionCompleta, tipo_via, nombre_via, numero_via, 
+         piso, codigo_postal, ciudad, hashedPassword, usuarioId]
+      );
+    } else {
+      // Actualizar sin cambiar contraseña
+      await pool.query(
+        `UPDATE usuarios SET 
+         nombre = ?, telefono = ?, direccion = ?,
+         tipo_via = ?, nombre_via = ?, numero_via = ?, 
+         piso = ?, codigo_postal = ?, ciudad = ?
+         WHERE id = ?`,
+        [nombre, telefono, direccionCompleta, tipo_via, nombre_via, numero_via, 
+         piso, codigo_postal, ciudad, usuarioId]
+      );
+    }
 
     return NextResponse.json({ 
       success: true, 

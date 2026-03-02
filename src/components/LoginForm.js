@@ -1,181 +1,106 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 const LoginForm = ({ show, onHide }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  const { login } = useAuth();
+  const [error, setError] = useState('');
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
-    const result = await login(email, password);
-    
-    if (result.success) {
-      onHide();
-      setEmail('');
-      setPassword('');
 
-       router.push('/zonaPrivada/miPerfil');
-    } else {
-      setError(result.error || 'Error al iniciar sesión');
+    try {
+      const success = await login(email, password);
+      if (success) {
+        onHide();
+        router.push('/');
+      } else {
+        setError('Credenciales inválidas');
+      }
+    } catch (err) {
+      setError('Error al iniciar sesión');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
-  if (!show) return null;
-
   return (
-    <div className="modal-overlay" style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1050
-    }}>
-      <div className="modal-content" style={{
-        backgroundColor: 'white',
-        borderRadius: '8px',
-        width: '90%',
-        maxWidth: '500px',
-        maxHeight: '90vh',
-        overflow: 'auto',
-        boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
-      }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '1rem',
-          borderBottom: '1px solid #dee2e6'
-        }}>
-          <h5 className="modal-title" style={{ margin: 0, fontWeight: 'bold' }}>Iniciar Sesión</h5>
-          <button 
-            onClick={onHide}
+    <Modal 
+      show={show} 
+      onHide={onHide} 
+      centered
+      restoreFocus={false}
+    >
+      <Modal.Header closeButton style={{ border: 'none' }}>
+        <Modal.Title style={{ color: '#2E7D32' }}>Iniciar Sesión</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {error && <Alert variant="danger">{error}</Alert>}
+        
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label style={{ color: '#6B5E4A' }}>Email</Form.Label>
+            <Form.Control
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label style={{ color: '#6B5E4A' }}>Contraseña</Form.Label>
+            <Form.Control
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+            />
+          </Form.Group>
+
+          <div className="text-end mb-3">
+            <Link href="/recuperar-password" style={{ color: '#2E7D32', textDecoration: 'none' }}>
+              ¿Has olvidado tu contraseña?
+            </Link>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={loading}
             style={{
-              border: 'none',
-              background: 'none',
-              fontSize: '1.5rem',
-              cursor: 'pointer',
-              padding: '0 0.5rem'
+              backgroundColor: '#A8E6CF',
+              borderColor: '#A8E6CF',
+              color: '#2E7D32',
+              borderRadius: '30px',
+              padding: '0.75rem',
+              width: '100%',
+              fontWeight: 'bold'
             }}
           >
-            ×
-          </button>
+            {loading ? <Spinner animation="border" size="sm" /> : 'Iniciar Sesión'}
+          </Button>
+        </Form>
+
+        <div className="text-center mt-3">
+          <span style={{ color: '#6B5E4A' }}>¿Aún no eres usuario? </span>
+          <Link href="/registro" style={{ color: '#2E7D32', fontWeight: 'bold', textDecoration: 'none' }}>
+            Regístrate aquí
+          </Link>
         </div>
-
-        {/* Body */}
-        <div style={{ padding: '1rem' }}>
-          {error && (
-            <div style={{
-              padding: '0.75rem 1rem',
-              marginBottom: '1rem',
-              backgroundColor: '#f8d7da',
-              color: '#721c24',
-              borderRadius: '4px'
-            }}>
-              {error}
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}>
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="ejemplo@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  fontSize: '1rem',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '0.5rem',
-                fontWeight: '500'
-              }}>
-                Contraseña
-              </label>
-              <input
-                type="password"
-                placeholder="********"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  fontSize: '1rem',
-                  border: '1px solid #ced4da',
-                  borderRadius: '4px'
-                }}
-              />
-            </div>
-
-            <div style={{
-              fontSize: '0.875rem',
-              color: '#6c757d',
-              marginBottom: '1rem'
-            }}>
-              <p style={{ margin: '0 0 0.25rem 0' }}>
-                <strong>Usuarios de prueba:</strong>
-              </p>
-              <p style={{ margin: '0' }}>Admin: admin@misipuchiful.com / admin123</p>
-              <p style={{ margin: '0' }}>Usuario: usuario@demo.com / usuario123</p>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                fontSize: '1rem',
-                fontWeight: '500',
-                color: 'white',
-                backgroundColor: loading ? '#6c757d' : '#28a745',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {loading ? 'Iniciando...' : 'Iniciar Sesión'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 

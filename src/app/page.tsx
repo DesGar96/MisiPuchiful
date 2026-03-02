@@ -36,13 +36,46 @@ export default function Inicio() {
                 todos los productos y servicios que necesitas para que tu compañero peludo disfrute cada día.
               </p>
               <div className="d-flex gap-3 flex-wrap">
-                <Button href="/tienda" variant="success" size="lg">
+                <Button 
+                  href="/tienda" 
+                  size="lg"
+                  style={{
+                    backgroundColor: '#A8E6CF',
+                    borderColor: '#A8E6CF',
+                    color: '#000000',
+                    borderRadius: '40px',
+                    padding: '0.8rem 2rem',
+                    fontWeight: 'bold'
+                  }}
+                >
                   🛒 Ver Tienda
                 </Button>
-                <Button href="/blog" variant="outline-success" size="lg">
+                <Button 
+                  href="/blog" 
+                  size="lg"
+                  style={{
+                    backgroundColor: '#A8E6CF',
+                    borderColor: '#A8E6CF',
+                    color: '#000000',
+                    borderRadius: '40px',
+                    padding: '0.8rem 2rem',
+                    fontWeight: 'bold'
+                  }}
+                >
                   📖 Leer Blog
                 </Button>
-                <Button href="/contacto" variant="outline-secondary" size="lg">
+                <Button 
+                  href="/contacto" 
+                  size="lg"
+                  style={{
+                    backgroundColor: '#A8E6CF',
+                    borderColor: '#A8E6CF',
+                    color: '#000000',
+                    borderRadius: '40px',
+                    padding: '0.8rem 2rem',
+                    fontWeight: 'bold'
+                  }}
+                >
                   📞 Contactar
                 </Button>
               </div>
@@ -149,8 +182,19 @@ export default function Inicio() {
                       <p className="text-muted mb-4">
                         Baño, corte, cepillado y cuidados estéticos para que tu mascota luzca espectacular.
                       </p>
-                      <Link href="/reservas" className="btn btn-success">
-                        Reservar cita
+                      <Link href="/reservas" style={{ textDecoration: 'none' }}>
+                        <Button
+                          style={{
+                            backgroundColor: '#A8E6CF',
+                            borderColor: '#A8E6CF',
+                            color: '#000000',
+                            borderRadius: '30px',
+                            padding: '0.5rem 1.5rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Reservar cita
+                        </Button>
                       </Link>
                     </CardBody>
                   </Col>
@@ -176,8 +220,19 @@ export default function Inicio() {
                       <p className="text-muted mb-4">
                         Consultas, vacunas, revisiones y cuidados médicos para tu compañero peludo.
                       </p>
-                      <Link href="/reservas" className="btn btn-primary">
-                        Pedir cita
+                      <Link href="/reservas" style={{ textDecoration: 'none' }}>
+                        <Button
+                          style={{
+                            backgroundColor: '#A8E6CF',
+                            borderColor: '#A8E6CF',
+                            color: '#000000',
+                            borderRadius: '30px',
+                            padding: '0.5rem 1.5rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Pedir cita
+                        </Button>
                       </Link>
                     </CardBody>
                   </Col>
@@ -211,7 +266,18 @@ export default function Inicio() {
                   <CardText>
                     Aprende las mejores técnicas para convencer a tus humanos de que te den ese pollito extra...
                   </CardText>
-                  <Button variant="outline-success" size="sm" href="/blog">
+                  <Button 
+                    size="sm" 
+                    href="/blog"
+                    style={{
+                      backgroundColor: '#A8E6CF',
+                      borderColor: '#A8E6CF',
+                      color: '#000000',
+                      borderRadius: '20px',
+                      padding: '0.4rem 1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     Leer más
                   </Button>
                 </CardBody>
@@ -232,7 +298,18 @@ export default function Inicio() {
                   <CardText>
                     Descubre las mejores posiciones y momentos del día para dormir como un verdadero experto...
                   </CardText>
-                  <Button variant="outline-success" size="sm" href="/blog">
+                  <Button 
+                    size="sm" 
+                    href="/blog"
+                    style={{
+                      backgroundColor: '#A8E6CF',
+                      borderColor: '#A8E6CF',
+                      color: '#000000',
+                      borderRadius: '20px',
+                      padding: '0.4rem 1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     Leer más
                   </Button>
                 </CardBody>
@@ -253,7 +330,18 @@ export default function Inicio() {
                   <CardText>
                     Guía definitiva para seleccionar el juguete que durará más de 5 minutos sin romperse...
                   </CardText>
-                  <Button variant="outline-success" size="sm" href="/blog">
+                  <Button 
+                    size="sm" 
+                    href="/blog"
+                    style={{
+                      backgroundColor: '#A8E6CF',
+                      borderColor: '#A8E6CF',
+                      color: '#000000',
+                      borderRadius: '20px',
+                      padding: '0.4rem 1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
                     Leer más
                   </Button>
                 </CardBody>
@@ -261,7 +349,18 @@ export default function Inicio() {
             </Col>
           </Row>
           <div className="text-center mt-4">
-            <Button href="/blog" variant="success" size="lg">
+            <Button 
+              href="/blog" 
+              size="lg"
+              style={{
+                backgroundColor: '#A8E6CF',
+                borderColor: '#A8E6CF',
+                color: '#000000',
+                borderRadius: '40px',
+                padding: '0.8rem 2rem',
+                fontWeight: 'bold'
+              }}
+            >
               Ver todos los artículos del blog
             </Button>
           </div>

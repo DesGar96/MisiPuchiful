@@ -8,10 +8,10 @@ export function middleware(request: NextRequest) {
   // Rutas que requieren autenticación
   const protectedPaths = [
     '/zonaPrivada',
-    '/zonaPrivada/perfil',
+    '/zonaPrivada/miPerfil',
     '/zonaPrivada/pedidos',
     '/zonaPrivada/resenas',
-    '/perfil', // También protegemos /perfil directamente
+    '/miPerfil', // También protegemos /perfil directamente
   ];
   
   // Verificar si la ruta actual está protegida
