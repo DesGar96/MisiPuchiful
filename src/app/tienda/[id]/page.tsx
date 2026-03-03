@@ -107,8 +107,8 @@ export default function ProductoPage() {
                 
                 {/* BADGES DE OFERTA Y NOVEDAD */}
                 <div className="d-flex gap-2">
-                  {/* Usamos == para aceptar tanto número 1 como string '1' */}
-                  {(producto.es_oferta == 1 || producto.es_oferta === '1') && (
+                  {/* OFERTA - basada en precio_oferta */}
+                  {producto.precio_oferta && producto.precio_oferta > 0 && (
                     <Badge style={{ 
                       backgroundColor: '#FFD3B6',
                       color: '#6B5E4A',
@@ -118,7 +118,8 @@ export default function ProductoPage() {
                       🔥 OFERTA
                     </Badge>
                   )}
-                  {(producto.es_novedad == 1 || producto.es_novedad === '1') && (
+                  {/* NOVEDAD */}
+                  {producto.es_novedad == 1 && (
                     <Badge style={{ 
                       backgroundColor: '#A8E6CF',
                       color: '#2E7D32',

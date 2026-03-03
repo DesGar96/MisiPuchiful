@@ -23,8 +23,7 @@ export default function AdminProductosPage() {
     categoria_id: '',
     destacado: false,
     es_novedad: false,
-    es_oferta: false,
-    precio_oferta: ''
+    precio_oferta: ''  // Mantenemos precio_oferta pero sin checkbox
   });
 
   useEffect(() => {
@@ -87,7 +86,6 @@ export default function AdminProductosPage() {
       categoria_id: producto.categoria_id || '',
       destacado: producto.destacado === 1,
       es_novedad: producto.es_novedad === 1,
-      es_oferta: producto.es_oferta === 1,
       precio_oferta: producto.precio_oferta || ''
     });
     setShowModal(true);
@@ -102,10 +100,17 @@ export default function AdminProductosPage() {
       
       const method = productoActual ? 'PUT' : 'POST';
 
+      // Ya no enviamos es_oferta, solo precio_oferta
+      const dataToSend = {
+        ...formData,
+        // Si precio_oferta está vacío, lo enviamos como null
+        precio_oferta: formData.precio_oferta || null
+      };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataToSend)
       });
 
       const result = await response.json();
@@ -142,7 +147,7 @@ export default function AdminProductosPage() {
             setFormData({
               nombre: '', descripcion: '', precio: '', stock: '', imagen: '',
               categoria_id: '', destacado: false, es_novedad: false,
-              es_oferta: false, precio_oferta: ''
+              precio_oferta: ''
             });
             setShowModal(true);
           }}
@@ -194,37 +199,52 @@ export default function AdminProductosPage() {
                   )}
                 </td>
                 <td>{p.nombre}</td>
-                <td>{p.precio}€</td>
+                <td>
+                  {p.precio_oferta ? (
+                    <>
+                      <span style={{ textDecoration: 'line-through', color: '#9E9E9E', marginRight: '0.5rem' }}>
+                        {p.precio}€
+                      </span>
+                      <span style={{ color: '#2E7D32', fontWeight: 'bold' }}>
+                        {p.precio_oferta}€
+                      </span>
+                    </>
+                  ) : (
+                    <span>{p.precio}€</span>
+                  )}
+                </td>
                 <td>{p.stock}</td>
                 <td>
-  {p.es_novedad === 1 && (
-    <Badge 
-      className="me-2"
-      style={{ 
-        backgroundColor: '#A8E6CF', 
-        color: '#2E7D32',
-        padding: '0.5rem 1rem',
-        borderRadius: '30px',
-        fontWeight: 'bold'
-      }}
-    >
-      🌱 NOVEDAD
-    </Badge>
-  )}
-  {p.es_oferta === 1 && (
-    <Badge 
-      style={{ 
-        backgroundColor: '#FFD3B6', 
-        color: '#6B5E4A',
-        padding: '0.5rem 1rem',
-        borderRadius: '30px',
-        fontWeight: 'bold'
-      }}
-    >
-      🔥 OFERTA
-    </Badge>
-  )}
-</td>
+                  {/* NOVEDAD */}
+                  {p.es_novedad === 1 && (
+                    <Badge 
+                      className="me-2"
+                      style={{ 
+                        backgroundColor: '#A8E6CF', 
+                        color: '#2E7D32',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '30px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      🌱 NOVEDAD
+                    </Badge>
+                  )}
+                  {/* OFERTA - basada en precio_oferta */}
+                  {p.precio_oferta && p.precio_oferta > 0 && (
+                    <Badge 
+                      style={{ 
+                        backgroundColor: '#FFD3B6', 
+                        color: '#6B5E4A',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '30px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      🔥 OFERTA
+                    </Badge>
+                  )}
+                </td>
                 <td>
                   <Button
                     size="sm"
@@ -333,7 +353,7 @@ export default function AdminProductosPage() {
             </Form.Group>
 
             <Row>
-              <Col md={4}>
+              <Col md={6}>
                 <Form.Check
                   type="checkbox"
                   label="Destacado"
@@ -341,7 +361,7 @@ export default function AdminProductosPage() {
                   onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
                 />
               </Col>
-              <Col md={4}>
+              <Col md={6}>
                 <Form.Check
                   type="checkbox"
                   label="Novedad"
@@ -349,27 +369,21 @@ export default function AdminProductosPage() {
                   onChange={(e) => setFormData({...formData, es_novedad: e.target.checked})}
                 />
               </Col>
-              <Col md={4}>
-                <Form.Check
-                  type="checkbox"
-                  label="Oferta"
-                  checked={formData.es_oferta}
-                  onChange={(e) => setFormData({...formData, es_oferta: e.target.checked})}
-                />
-              </Col>
             </Row>
 
-            {formData.es_oferta && (
-              <Form.Group className="mb-3 mt-3">
-                <Form.Label>Precio de oferta</Form.Label>
-                <Form.Control
-                  type="number"
-                  step="0.01"
-                  value={formData.precio_oferta}
-                  onChange={(e) => setFormData({...formData, precio_oferta: e.target.value})}
-                />
-              </Form.Group>
-            )}
+            <Form.Group className="mb-3 mt-3">
+              <Form.Label>Precio de oferta (si está en oferta)</Form.Label>
+              <Form.Control
+                type="number"
+                step="0.01"
+                value={formData.precio_oferta}
+                onChange={(e) => setFormData({...formData, precio_oferta: e.target.value})}
+                placeholder="Dejar vacío si no está en oferta"
+              />
+              <Form.Text className="text-muted">
+                Si rellenas este campo, el producto se mostrará como "OFERTA"
+              </Form.Text>
+            </Form.Group>
 
             <div className="d-flex justify-content-end gap-2 mt-4">
               <Button variant="secondary" onClick={() => setShowModal(false)}>

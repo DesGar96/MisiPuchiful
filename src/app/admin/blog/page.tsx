@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Badge, Spinner, Alert, Modal, Form, Row, Col } from 'react-bootstrap';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -21,24 +20,16 @@ export default function AdminBlogPage() {
     resumen: '',
     imagen: '',
     categoria: 'general',
-    destacado: false,
     activo: true
   });
 
-  // Verificar que es admin
   useEffect(() => {
-    if (!user) {
+    if (!user || !isAdmin()) {
       router.push('/');
-    } else if (!isAdmin()) {
-      router.push('/');
-    }
-  }, [user, isAdmin, router]);
-
-  useEffect(() => {
-    if (user && isAdmin()) {
+    } else {
       fetchPosts();
     }
-  }, [user]);
+  }, [user, isAdmin, router]);
 
   const fetchPosts = async () => {
     try {
@@ -83,7 +74,6 @@ export default function AdminBlogPage() {
       resumen: post.resumen || '',
       imagen: post.imagen || '',
       categoria: post.categoria || 'general',
-      destacado: post.destacado === 1,
       activo: post.activo === 1
     });
     setShowModal(true);
@@ -116,9 +106,29 @@ export default function AdminBlogPage() {
     }
   };
 
+  // FUNCIÓN CORREGIDA PARA FORMATO DE FECHAS (usando fecha_publicacion)
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('es-ES', options);
+    if (!dateString) return 'Fecha no disponible';
+    
+    try {
+      const date = new Date(dateString);
+      // Verificar si la fecha es válida
+      if (isNaN(date.getTime())) {
+        return 'Fecha inválida';
+      }
+      
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      return date.toLocaleDateString('es-ES', options);
+    } catch (error) {
+      console.error('Error formateando fecha:', error);
+      return 'Fecha inválida';
+    }
   };
 
   if (!user || !isAdmin()) {
@@ -146,7 +156,6 @@ export default function AdminBlogPage() {
               resumen: '',
               imagen: '',
               categoria: 'general',
-              destacado: false,
               activo: true
             });
             setShowModal(true);
@@ -197,7 +206,7 @@ export default function AdminBlogPage() {
                     {post.categoria || 'General'}
                   </Badge>
                 </td>
-                <td>{formatDate(post.fecha_creacion)}</td>
+                <td>{formatDate(post.fecha_publicacion)}</td> {/* CAMBIADO A fecha_publicacion */}
                 <td>
                   {post.activo === 1 ? (
                     <Badge style={{ 
@@ -330,24 +339,13 @@ export default function AdminBlogPage() {
               </Col>
             </Row>
 
-            <Row>
-              <Col md={6}>
-                <Form.Check
-                  type="checkbox"
-                  label="Destacado"
-                  checked={formData.destacado}
-                  onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
-                />
-              </Col>
-              <Col md={6}>
-                <Form.Check
-                  type="checkbox"
-                  label="Activo"
-                  checked={formData.activo}
-                  onChange={(e) => setFormData({...formData, activo: e.target.checked})}
-                />
-              </Col>
-            </Row>
+            <Form.Check
+              type="checkbox"
+              label="Activo"
+              checked={formData.activo}
+              onChange={(e) => setFormData({...formData, activo: e.target.checked})}
+              className="mb-3"
+            />
 
             <div className="d-flex justify-content-end gap-2 mt-4">
               <Button variant="secondary" onClick={() => setShowModal(false)}>

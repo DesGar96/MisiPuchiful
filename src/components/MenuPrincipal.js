@@ -238,6 +238,14 @@ const MenuPrincipal = () => {
                         >
                           📬 Contactos
                         </div>
+                        {/* NUEVA OPCIÓN: Crear Administrador */}
+                        <div
+                          onClick={() => handleNavigation('/admin/crear-admin')}
+                          className="px-4 py-3 border-bottom ps-5"
+                          style={{ cursor: 'pointer', color: '#6B5E4A' }}
+                        >
+                          👑 Crear Admin
+                        </div>
                       </>
                     )}
 

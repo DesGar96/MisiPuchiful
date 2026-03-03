@@ -83,7 +83,7 @@ export default function Inicio() {
             <Col lg={6}>
               <div className="position-relative">
                 <Image
-                  src="/imagenes/animales/cabecera.jpg"
+                  src="/imagenes/fotosMPweb/foto-principal.jpg"
                   alt="Misifú y Puchi"
                   width={600}
                   height={400}
@@ -168,7 +168,7 @@ export default function Inicio() {
                 <Row className="g-0">
                   <Col md={6}>
                     <Image
-                      src="/imagenes/animales/puchi.jpg"
+                      src="/imagenes/fotosMPweb/puchi.jpg"
                       alt="Peluquería canina"
                       width={300}
                       height={300}
@@ -206,7 +206,7 @@ export default function Inicio() {
                 <Row className="g-0">
                   <Col md={6}>
                     <Image
-                      src="/imagenes/animales/misi.jpg"
+                      src="/imagenes/fotosMPweb/misi.jpg"
                       alt="Veterinario"
                       width={300}
                       height={300}
@@ -255,7 +255,7 @@ export default function Inicio() {
               <Card className="h-100 border-0 shadow-sm">
                 <CardImg 
                   variant="top" 
-                  src="/imagenes/animales/puchinavidad.jpg" 
+                  src="/imagenes/fotosMPweb/puchinavidad.jpg" 
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <CardBody>
@@ -287,7 +287,7 @@ export default function Inicio() {
               <Card className="h-100 border-0 shadow-sm">
                 <CardImg 
                   variant="top" 
-                  src="/imagenes/animales/sofa.jpg" 
+                  src="/imagenes/fotosMPweb/sofa.jpg" 
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <CardBody>
@@ -319,7 +319,7 @@ export default function Inicio() {
               <Card className="h-100 border-0 shadow-sm">
                 <CardImg 
                   variant="top" 
-                  src="/imagenes/animales/alsol.jpg" 
+                  src="/imagenes/fotosMPweb/juguete.jpg" 
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
                 <CardBody>

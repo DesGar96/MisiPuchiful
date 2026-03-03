@@ -236,7 +236,8 @@ const ProductGrid = () => {
                         sizes="(max-width: 768px) 100vw, 25vw"
                         style={{ objectFit: 'cover' }}
                       />
-                      {product.es_oferta == 1 && (
+                      {/* OFERTA - basada en precio_oferta */}
+                      {product.precio_oferta && product.precio_oferta > 0 && (
                         <Badge style={{ 
                           position: 'absolute',
                           top: '15px',
@@ -249,6 +250,7 @@ const ProductGrid = () => {
                           🔥 OFERTA
                         </Badge>
                       )}
+                      {/* NOVEDAD */}
                       {product.es_novedad == 1 && (
                         <Badge style={{ 
                           position: 'absolute',
