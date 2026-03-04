@@ -1,15 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Card, Spinner, Alert } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Notificacion from '@/components/Notificacion';
+import LoginForm from '@/components/LoginForm'; // ← IMPORTANTE: AÑADIDO
 
 export default function ReservasPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const [showLogin, setShowLogin] = useState(false); // ← AÑADIDO
   const [formData, setFormData] = useState({
     tipo_servicio: '',
     tipo_mascota: '',
@@ -45,7 +47,7 @@ export default function ReservasPage() {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/?mensaje=debes-iniciar-sesion-para-reservar');
+      console.log('Usuario no autenticado');
     }
   }, [user, authLoading, router]);
 
@@ -97,7 +99,7 @@ export default function ReservasPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Validación simple: no permitir reservas para hoy
+    // Validación: no permitir reservas para hoy
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     
@@ -168,7 +170,91 @@ export default function ReservasPage() {
   }
 
   if (!user) {
-    return null;
+    return (
+      <>
+        <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
+          <Container>
+            <div style={{ 
+              background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
+              color: '#6B5E4A',
+              padding: '3rem 0',
+              marginBottom: '3rem',
+              borderRadius: '0 0 50px 50px',
+              textAlign: 'center'
+            }}>
+              <h1 className="display-4 fw-bold mb-3" style={{ color: '#2E7D32' }}>
+                📅 Reserva tu cita
+              </h1>
+              <p className="lead fs-4" style={{ color: '#6B5E4A' }}>
+                Peluquería y consultas veterinarias para tus peludos
+              </p>
+            </div>
+
+            <Row className="justify-content-center">
+              <Col md={8} lg={6}>
+                <Card className="border-0 shadow-lg text-center" style={{ borderRadius: '30px', padding: '3rem' }}>
+                  <Card.Body>
+                    <span style={{ fontSize: '5rem', display: 'block', marginBottom: '1rem' }}>🔒</span>
+                    
+                    <h2 style={{ color: '#2E7D32', marginBottom: '1.5rem' }}>
+                      Acceso restringido
+                    </h2>
+                    
+                    <p style={{ color: '#6B5E4A', fontSize: '1.2rem', marginBottom: '2rem' }}>
+                      Para poder realizar una reserva necesitas tener una cuenta en Misipuchiful.
+                    </p>
+                    
+                    <p style={{ color: '#6B5E4A', marginBottom: '2rem' }}>
+                      Si ya tienes cuenta, inicia sesión. Si no, regístrate en unos segundos.
+                    </p>
+                    
+                    <div className="d-flex gap-3 justify-content-center">
+                      <Button
+                        onClick={() => setShowLogin(true)} // ← CORREGIDO
+                        style={{
+                          backgroundColor: '#A8E6CF',
+                          borderColor: '#A8E6CF',
+                          color: '#2E7D32',
+                          borderRadius: '30px',
+                          padding: '0.75rem 2rem',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        Iniciar Sesión
+                      </Button>
+                      
+                      <Link href="/registro" passHref>
+                        <Button
+                          style={{
+                            backgroundColor: 'white',
+                            borderColor: '#A8E6CF',
+                            color: '#2E7D32',
+                            borderRadius: '30px',
+                            padding: '0.75rem 2rem',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Crear cuenta
+                        </Button>
+                      </Link>
+                    </div>
+                    
+                    <div className="mt-4 p-3" style={{ backgroundColor: '#E8F5E9', borderRadius: '15px' }}>
+                      <p className="mb-0" style={{ color: '#6B5E4A' }}>
+                        📞 También puedes llamarnos al <strong>123 456 789</strong> para reservar por teléfono.
+                      </p>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+
+        {/* Modal de Login */}
+        <LoginForm show={showLogin} onHide={() => setShowLogin(false)} />
+      </>
+    );
   }
 
   return (
@@ -270,7 +356,7 @@ export default function ReservasPage() {
                           }}
                         />
                         <Form.Text className="text-muted">
-                          No se admiten reservas para hoy
+                          Mínimo 24 horas de antelación
                         </Form.Text>
                       </Form.Group>
                     </Col>

@@ -13,6 +13,7 @@ export default function BuscarPage() {
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [debug, setDebug] = useState(null);
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -23,18 +24,24 @@ export default function BuscarPage() {
 
       try {
         setLoading(true);
+        setError(null);
+        
         const response = await fetch(`/api/buscar?q=${encodeURIComponent(query)}`);
         
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
           throw new Error(`Error HTTP: ${response.status}`);
         }
         
         const result = await response.json();
+        console.log('Resultados:', result);
         
         if (result.success) {
           setResultados(result.data || []);
         } else {
           setError(result.error || 'Error al realizar la búsqueda');
+          setDebug(result);
         }
       } catch (err) {
         console.error('Error en búsqueda:', err);
@@ -84,6 +91,12 @@ export default function BuscarPage() {
           </Alert>
         )}
 
+        {debug && (
+          <Alert variant="warning" className="mb-4">
+            <pre>{JSON.stringify(debug, null, 2)}</pre>
+          </Alert>
+        )}
+
         {!query ? (
           <Card className="text-center py-5 border-0 shadow-sm" style={{ borderRadius: '25px' }}>
             <Card.Body>
@@ -118,7 +131,6 @@ export default function BuscarPage() {
               {resultados.map((item, index) => (
                 <Col key={`${item.tipo}-${item.id || index}`}>
                   {item.tipo === 'producto' ? (
-                    // Tarjeta de producto
                     <Link href={`/tienda/${item.id}`} style={{ textDecoration: 'none' }}>
                       <Card className="h-100 shadow-sm hover-effect" style={{ 
                         borderRadius: '25px',
@@ -133,8 +145,8 @@ export default function BuscarPage() {
                             sizes="(max-width: 768px) 100vw, 25vw"
                             style={{ objectFit: 'cover' }}
                           />
-                          {item.es_oferta == 1 && (
-                            <Badge style={{ 
+                          {item.precio_oferta && item.precio_oferta > 0 && (
+                            <div style={{
                               position: 'absolute',
                               top: '10px',
                               left: '10px',
@@ -142,13 +154,14 @@ export default function BuscarPage() {
                               color: '#6B5E4A',
                               padding: '0.3rem 0.8rem',
                               borderRadius: '30px',
-                              fontSize: '0.8rem'
+                              fontSize: '0.8rem',
+                              fontWeight: 'bold'
                             }}>
                               🔥 OFERTA
-                            </Badge>
+                            </div>
                           )}
                           {item.es_novedad == 1 && (
-                            <Badge style={{ 
+                            <div style={{
                               position: 'absolute',
                               top: '10px',
                               right: '10px',
@@ -156,10 +169,11 @@ export default function BuscarPage() {
                               color: '#2E7D32',
                               padding: '0.3rem 0.8rem',
                               borderRadius: '30px',
-                              fontSize: '0.8rem'
+                              fontSize: '0.8rem',
+                              fontWeight: 'bold'
                             }}>
                               🌱 NOVEDAD
-                            </Badge>
+                            </div>
                           )}
                         </div>
                         <Card.Body>
@@ -184,7 +198,6 @@ export default function BuscarPage() {
                       </Card>
                     </Link>
                   ) : (
-                    // Tarjeta de blog post
                     <Link href={`/blog/${item.id}`} style={{ textDecoration: 'none' }}>
                       <Card className="h-100 shadow-sm hover-effect" style={{ 
                         borderRadius: '25px',

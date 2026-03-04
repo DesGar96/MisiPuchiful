@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Badge, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Badge, Button, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ModalConfirmacion from '@/components/ModalConfirmacion';
 
 export default function MisReservasPage() {
   const { user, loading: authLoading } = useAuth();
@@ -12,8 +13,8 @@ export default function MisReservasPage() {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [reservaActual, setReservaActual] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
   const [mensaje, setMensaje] = useState('');
 
   useEffect(() => {
@@ -65,11 +66,16 @@ export default function MisReservasPage() {
     return textos[estado] || estado;
   };
 
-  const handleCancelar = async (reservaId) => {
-    if (!confirm('¿Estás seguro de cancelar esta reserva?')) return;
+  const handleCancelarClick = (reserva) => {
+    setReservaSeleccionada(reserva);
+    setShowConfirmModal(true);
+  };
+
+  const handleCancelarConfirm = async () => {
+    if (!reservaSeleccionada) return;
 
     try {
-      const response = await fetch(`/api/reservas/${reservaId}`, {
+      const response = await fetch(`/api/reservas/${reservaSeleccionada.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -85,10 +91,14 @@ export default function MisReservasPage() {
         const data = await res.json();
         if (data.success) setReservas(data.data);
       } else {
-        alert('Error al cancelar la reserva');
+        setMensaje({ tipo: 'danger', texto: 'Error al cancelar la reserva' });
       }
     } catch (error) {
       console.error('Error:', error);
+      setMensaje({ tipo: 'danger', texto: 'Error de conexión' });
+    } finally {
+      setShowConfirmModal(false);
+      setReservaSeleccionada(null);
     }
   };
 
@@ -151,19 +161,14 @@ export default function MisReservasPage() {
                           <strong>Servicio:</strong> {reserva.tipo_servicio === 'peluqueria' ? '🐕 Peluquería' : '🏥 Veterinario'}
                         </p>
                         <p className="mb-1">
-                          <strong>Mascota:</strong> {reserva.mascota_nombre}
+                          <strong>Mascota:</strong> {reserva.mascota_nombre} 
+                          {reserva.tipo_mascota && ` (${reserva.tipo_mascota === 'perro' ? 'Perro' : reserva.tipo_mascota === 'gato' ? 'Gato' : 'Otras especies'})`}
                         </p>
-                        <p className="mb-1">
-                            <strong>Tipo:</strong> {
-                                reserva.tipo_mascota === 'perro' ? '🐕 Perro' :
-                                reserva.tipo_mascota === 'gato' ? '🐈 Gato' : '🐾 Otras especies'
-                            }
-                            </p>
                         <p className="mb-1">
                           <strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString('es-ES')}
                         </p>
                         <p className="mb-1">
-                          <strong>Hora:</strong> {reserva.hora_reserva.substring(0, 5)}
+                          <strong>Hora:</strong> {reserva.hora_reserva?.substring(0, 5)}
                         </p>
                       </div>
                       <Badge style={{
@@ -187,7 +192,7 @@ export default function MisReservasPage() {
                         <Button
                           size="sm"
                           variant="outline-danger"
-                          onClick={() => handleCancelar(reserva.id)}
+                          onClick={() => handleCancelarClick(reserva)}
                           style={{ borderColor: '#FF8B94', color: '#FF8B94', borderRadius: '20px' }}
                         >
                           Cancelar
@@ -200,6 +205,21 @@ export default function MisReservasPage() {
             ))}
           </Row>
         )}
+
+        {/* Modal de confirmación para cancelar reserva */}
+        <ModalConfirmacion
+          show={showConfirmModal}
+          onHide={() => {
+            setShowConfirmModal(false);
+            setReservaSeleccionada(null);
+          }}
+          onConfirm={handleCancelarConfirm}
+          titulo="Cancelar reserva"
+          mensaje={reservaSeleccionada ? 
+            `¿Estás seguro de cancelar la reserva de ${reservaSeleccionada.tipo_servicio === 'peluqueria' ? 'peluquería' : 'veterinario'} para ${reservaSeleccionada.mascota_nombre}?` 
+            : '¿Estás seguro de cancelar esta reserva?'}
+          icono={reservaSeleccionada?.tipo_servicio === 'peluqueria' ? '✂️' : '🏥'}
+        />
       </Container>
     </div>
   );

@@ -16,42 +16,42 @@ export async function GET() {
 
     console.log('🔍 Buscando reseñas para usuario:', usuarioId);
 
-    // Obtener reseñas escritas por el usuario (incluyendo info de edición)
+    // Obtener reseñas escritas por el usuario (con datos del producto)
     const [resenas] = await pool.query(`
-      SELECT r.*, p.nombre as producto_nombre, p.imagen as producto_imagen
+      SELECT r.*, 
+             p.nombre as producto_nombre, 
+             p.imagen as producto_imagen,
+             p.precio,
+             p.precio_oferta,
+             p.es_oferta,
+             p.es_novedad
       FROM resenas r
       JOIN productos p ON r.producto_id = p.id
       WHERE r.usuario_id = ?
       ORDER BY r.fecha DESC
     `, [usuarioId]);
 
-    // Obtener productos comprados (todos, para saber si puede reseñar)
-    const [compras] = await pool.query(`
-      SELECT DISTINCT pc.producto_id, p.nombre as producto_nombre, p.imagen as producto_imagen,
-             MAX(pc.fecha_compra) as fecha_compra,
-             CASE WHEN r.id IS NULL THEN TRUE ELSE FALSE END as puede_reseniar,
-             CASE WHEN r.id IS NOT NULL THEN TRUE ELSE FALSE END as ya_reseniado,
-             r.id as resena_id, r.puntuacion, r.comentario, r.fecha as fecha_resena
+    // Obtener productos pendientes de reseñar (con datos del producto)
+    const [pendientes] = await pool.query(`
+      SELECT pc.*, 
+             p.nombre as producto_nombre, 
+             p.imagen as producto_imagen,
+             p.precio,
+             p.precio_oferta,
+             p.es_oferta,
+             p.es_novedad
       FROM productos_comprados pc
       JOIN productos p ON pc.producto_id = p.id
-      LEFT JOIN resenas r ON pc.producto_id = r.producto_id AND r.usuario_id = pc.usuario_id
-      WHERE pc.usuario_id = ?
-      GROUP BY pc.producto_id
-      ORDER BY fecha_compra DESC
+      WHERE pc.usuario_id = ? AND pc.puede_reseniar = TRUE
     `, [usuarioId]);
 
-    // Separar en pendientes (comprado pero no reseñado) y escritas (ya reseñado)
-    const pendientes = compras.filter(c => !c.ya_reseniado);
-    const escritas = resenas; // Ya tenemos las reseñas completas
-
-    console.log('📊 Reseñas escritas:', escritas.length);
-    console.log('📊 Productos comprados totales:', compras.length);
-    console.log('📊 Pendientes de reseñar:', pendientes.length);
+    console.log('📊 Reseñas escritas:', resenas.length);
+    console.log('📊 Reseñas pendientes:', pendientes.length);
 
     return NextResponse.json({ 
       success: true, 
       data: {
-        escritas: escritas,
+        escritas: resenas,
         pendientes: pendientes
       }
     });

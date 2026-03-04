@@ -18,9 +18,12 @@ const MenuPrincipal = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout, isAdmin } = useAuth();
+  const { vaciarCarrito } = useCarrito(); // ← IMPORTAMOS vaciarCarrito
 
   useEffect(() => {
     setIsBlogPage(pathname?.includes('/blog') || false);
+    setExpanded(false);
+    setShowUserMenu(false);
   }, [pathname]);
 
   const handleSearch = (e) => {
@@ -37,6 +40,18 @@ const MenuPrincipal = () => {
     setShowUserMenu(false);
     setExpanded(false);
   };
+
+  const handleLogout = async () => {
+    // Primero vaciamos el carrito
+    vaciarCarrito();
+    // Luego cerramos sesión
+    await logout();
+    setShowUserMenu(false);
+    setExpanded(false);
+    router.push('/');
+  };
+
+  // ... resto del código igual ...
 
   return (
     <>
@@ -238,7 +253,6 @@ const MenuPrincipal = () => {
                         >
                           📬 Contactos
                         </div>
-                        {/* NUEVA OPCIÓN: Crear Administrador */}
                         <div
                           onClick={() => handleNavigation('/admin/crear-admin')}
                           className="px-4 py-3 border-bottom ps-5"
@@ -251,11 +265,7 @@ const MenuPrincipal = () => {
 
                     {/* Cerrar sesión - para todos */}
                     <div
-                      onClick={() => {
-                        logout();
-                        setShowUserMenu(false);
-                        setExpanded(false);
-                      }}
+                      onClick={handleLogout}  // ← USAMOS handleLogout en lugar de logout directo
                       className="px-4 py-3"
                       style={{ cursor: 'pointer', color: '#FF8B94', fontWeight: 'bold' }}
                     >

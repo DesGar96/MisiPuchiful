@@ -16,27 +16,24 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Verificar si hay sesión al cargar
   useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/auth/session');
+        const data = await response.json();
+        if (data.user) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Error al verificar sesión:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkSession();
   }, []);
-
-  const checkSession = async () => {
-    try {
-      const response = await fetch('/api/auth/session');
-      const data = await response.json();
-      
-      if (data.authenticated) {
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Error al verificar sesión:', error);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const login = async (email, password) => {
     try {
@@ -45,26 +42,29 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         setUser(data.user);
-        return { success: true };
-      } else {
-        return { success: false, error: data.error };
+        return true;
       }
+      return false;
     } catch (error) {
-      return { success: false, error: 'Error de conexión' };
+      console.error('Error en login:', error);
+      return false;
     }
   };
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', {
+        method: 'POST'
+      });
+      
       setUser(null);
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error('Error en logout:', error);
     }
   };
 

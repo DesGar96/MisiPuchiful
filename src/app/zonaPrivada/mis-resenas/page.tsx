@@ -139,7 +139,7 @@ export default function MisResenasPage() {
       </Container>
     );
   }
-
+console.log('Datos de la primera reseña:', resenas.escritas[0]);
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
       <Container>
@@ -165,9 +165,72 @@ export default function MisResenasPage() {
                             sizes="80px"
                             style={{ objectFit: 'cover', borderRadius: '15px' }}
                           />
+                          {/* BADGES DE OFERTA Y NOVEDAD */}
+                          {item.es_oferta === 1 && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '5px',
+                              left: '5px',
+                              backgroundColor: '#FFD3B6',
+                              color: '#6B5E4A',
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '20px',
+                              fontSize: '0.7rem',
+                              fontWeight: 'bold',
+                              zIndex: 2
+                            }}>
+                              🔥 OFERTA
+                            </div>
+                          )}
+                          {item.es_novedad === 1 && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '5px',
+                              right: '5px',
+                              backgroundColor: '#A8E6CF',
+                              color: '#2E7D32',
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '20px',
+                              fontSize: '0.7rem',
+                              fontWeight: 'bold',
+                              zIndex: 2
+                            }}>
+                              🌱 NOVEDAD
+                            </div>
+                          )}
                         </div>
                         <div className="flex-grow-1">
                           <h5 style={{ color: '#2E7D32' }}>{item.producto_nombre}</h5>
+                          {/* PRECIO CON OFERTA SI CORRESPONDE */}
+                          <div style={{ marginBottom: '0.5rem' }}>
+                            {item.precio_oferta ? (
+                              <>
+                                <span style={{ 
+                                  textDecoration: 'line-through', 
+                                  color: '#9E9E9E',
+                                  fontSize: '0.8rem',
+                                  marginRight: '0.5rem'
+                                }}>
+                                  {item.precio}€
+                                </span>
+                                <span style={{ 
+                                  color: '#2E7D32', 
+                                  fontWeight: 'bold',
+                                  fontSize: '1rem'
+                                }}>
+                                  {item.precio_oferta}€
+                                </span>
+                              </>
+                            ) : (
+                              <span style={{ 
+                                color: '#2E7D32', 
+                                fontWeight: 'bold',
+                                fontSize: '1rem'
+                              }}>
+                                {item.precio}€
+                              </span>
+                            )}
+                          </div>
                           <Button
                             onClick={() => abrirFormularioNuevo(item.producto_id)}
                             style={{
@@ -176,7 +239,7 @@ export default function MisResenasPage() {
                               color: '#2E7D32',
                               borderRadius: '30px',
                               padding: '0.5rem 1rem',
-                              marginTop: '0.5rem'
+                              fontSize: '0.9rem'
                             }}
                           >
                             Dejar reseña
@@ -271,12 +334,74 @@ export default function MisResenasPage() {
                           sizes="60px"
                           style={{ objectFit: 'cover', borderRadius: '10px' }}
                         />
+                        {/* BADGES MINIATURA */}
+                        {resena.es_oferta === 1 && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '2px',
+                            left: '2px',
+                            backgroundColor: '#FFD3B6',
+                            color: '#6B5E4A',
+                            padding: '0.1rem 0.3rem',
+                            borderRadius: '15px',
+                            fontSize: '0.6rem',
+                            fontWeight: 'bold',
+                            zIndex: 2
+                          }}>
+                            🔥
+                          </div>
+                        )}
+                        {resena.es_novedad === 1 && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '2px',
+                            right: '2px',
+                            backgroundColor: '#A8E6CF',
+                            color: '#2E7D32',
+                            padding: '0.1rem 0.3rem',
+                            borderRadius: '15px',
+                            fontSize: '0.6rem',
+                            fontWeight: 'bold',
+                            zIndex: 2
+                          }}>
+                            🌱
+                          </div>
+                        )}
                       </div>
                       <div className="flex-grow-1">
                         <div className="d-flex justify-content-between">
-                          <Link href={`/tienda/${resena.producto_id}`} style={{ color: '#2E7D32', textDecoration: 'none' }}>
-                            <h5>{resena.producto_nombre}</h5>
-                          </Link>
+                          <div>
+                            <Link href={`/tienda/${resena.producto_id}`} style={{ color: '#2E7D32', textDecoration: 'none' }}>
+                              <h5>{resena.producto_nombre}</h5>
+                            </Link>
+                            {/* PRECIO CON OFERTA SI CORRESPONDE */}
+                            <div style={{ fontSize: '0.9rem' }}>
+                              {resena.precio_oferta ? (
+                                <>
+                                  <span style={{ 
+                                    textDecoration: 'line-through', 
+                                    color: '#9E9E9E',
+                                    marginRight: '0.5rem'
+                                  }}>
+                                    {resena.precio}€
+                                  </span>
+                                  <span style={{ 
+                                    color: '#2E7D32', 
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {resena.precio_oferta}€
+                                  </span>
+                                </>
+                              ) : (
+                                <span style={{ 
+                                  color: '#2E7D32', 
+                                  fontWeight: 'bold'
+                                }}>
+                                  {resena.precio}€
+                                </span>
+                              )}
+                            </div>
+                          </div>
                           <Button
                             variant="link"
                             onClick={() => abrirFormularioEdicion(resena)}
@@ -285,31 +410,27 @@ export default function MisResenasPage() {
                             <FaEdit size={20} />
                           </Button>
                         </div>
-                        <div className="d-flex gap-1">
+                        <div className="d-flex gap-1 mt-1">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <FaStar
                               key={star}
                               color={star <= resena.puntuacion ? '#FFD700' : '#E0E0E0'}
+                              size={14}
                             />
                           ))}
                         </div>
                         {resena.editada && (
-                          <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32', marginTop: '0.5rem' }}>
+                          <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32', fontSize: '0.7rem', marginTop: '0.3rem' }}>
                             ✏️ Editada
                           </Badge>
                         )}
                       </div>
                     </div>
-                    <p style={{ color: '#6B5E4A' }}>{resena.comentario}</p>
+                    <p style={{ color: '#6B5E4A', fontSize: '0.9rem' }}>{resena.comentario}</p>
                     <div className="d-flex justify-content-between">
                       <small style={{ color: '#9E9E9E' }}>
-                        Publicada: {new Date(resena.fecha).toLocaleDateString('es-ES')}
+                        {new Date(resena.fecha).toLocaleDateString('es-ES')}
                       </small>
-                      {resena.fecha_edicion && (
-                        <small style={{ color: '#9E9E9E' }}>
-                          Editada: {new Date(resena.fecha_edicion).toLocaleDateString('es-ES')}
-                        </small>
-                      )}
                     </div>
 
                     {mostrarFormulario === resena.producto_id && editandoResena === resena.id && (

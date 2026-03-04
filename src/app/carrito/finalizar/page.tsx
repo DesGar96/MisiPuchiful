@@ -12,7 +12,7 @@ import DireccionForm from '@/components/DireccionForm';
 export default function FinalizarCompraPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { items, total, limpiarCarrito } = useCarrito();
+  const { items, total, vaciarCarrito } = useCarrito();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -91,17 +91,17 @@ export default function FinalizarCompraPage() {
     
     // Validaciones específicas
     if (name === 'telefono') {
-      // Solo permitir números y máximo 9 dígitos
+      
       if (value === '' || /^\d{0,9}$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
     } else if (name === 'numeroVia') {
-      // Solo permitir números para el número de vía
+
       if (value === '' || /^\d*$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
     } else if (name === 'codigoPostal') {
-      // Solo permitir números y máximo 5 dígitos
+      
       if (value === '' || /^\d{0,5}$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
@@ -173,7 +173,7 @@ export default function FinalizarCompraPage() {
       if (result.success) {
         setPedidoId(result.pedidoId);
         setSuccess(true);
-        limpiarCarrito();
+        vaciarCarrito();
       } else {
         setError(result.error || 'Error al procesar el pedido');
       }
@@ -294,7 +294,7 @@ export default function FinalizarCompraPage() {
                     
                     <Form.Check
                       type="radio"
-                      label="💳 Tarjeta de crédito/débito (MODO PRUEBA)"
+                      label="💳 Tarjeta de crédito/débito"
                       name="metodoPago"
                       value="tarjeta"
                       checked={formData.metodoPago === 'tarjeta'}
@@ -306,7 +306,7 @@ export default function FinalizarCompraPage() {
                   {formData.metodoPago === 'tarjeta' && (
                     <div style={{ marginTop: '1.5rem' }}>
                       <p style={{ color: '#2E7D32', fontWeight: 'bold', marginBottom: '1rem' }}>
-                        💳 Datos de la tarjeta (para pruebas usa 4242 4242 4242 4242)
+                        💳 Datos de la tarjeta 
                       </p>
                       
                       <Form.Group className="mb-3">
@@ -330,7 +330,11 @@ export default function FinalizarCompraPage() {
                               type="text"
                               name="numeroTarjeta"
                               value={formData.numeroTarjeta}
-                              onChange={handleChange}
+                              onChange={(e) => {                                
+                              const value = e.target.value.replace(/[^\d]/g, '');
+                              const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                                setFormData({...formData, numeroTarjeta: formatted});
+                             }}
                               required={formData.metodoPago === 'tarjeta'}
                               placeholder="4242 4242 4242 4242"
                               maxLength="19"
@@ -345,7 +349,13 @@ export default function FinalizarCompraPage() {
                               type="text"
                               name="fechaExpiracion"
                               value={formData.fechaExpiracion}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                let value = e.target.value.replace(/[^\d]/g, '');
+                                if (value.length >= 2) {
+                                  value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                                  }
+                                  setFormData({...formData, fechaExpiracion: value});
+                                }}
                               required={formData.metodoPago === 'tarjeta'}
                               placeholder="MM/AA"
                               maxLength="5"

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -34,13 +34,13 @@ const LoginForm = ({ show, onHide }) => {
     }
   };
 
+  const handleLinkClick = (path) => {
+    onHide(); // Cerrar el modal
+    router.push(path); // Navegar a la página
+  };
+
   return (
-    <Modal 
-      show={show} 
-      onHide={onHide} 
-      centered
-      restoreFocus={false}
-    >
+    <Modal show={show} onHide={onHide} centered restoreFocus={false}>
       <Modal.Header closeButton style={{ border: 'none' }}>
         <Modal.Title style={{ color: '#2E7D32' }}>Iniciar Sesión</Modal.Title>
       </Modal.Header>
@@ -71,9 +71,13 @@ const LoginForm = ({ show, onHide }) => {
           </Form.Group>
 
           <div className="text-end mb-3">
-            <Link href="/recuperar-password" style={{ color: '#2E7D32', textDecoration: 'none' }}>
+            <Button 
+              variant="link" 
+              onClick={() => handleLinkClick('/recuperar-password')}
+              style={{ color: '#2E7D32', textDecoration: 'none', padding: 0 }}
+            >
               ¿Has olvidado tu contraseña?
-            </Link>
+            </Button>
           </div>
 
           <Button
@@ -89,15 +93,19 @@ const LoginForm = ({ show, onHide }) => {
               fontWeight: 'bold'
             }}
           >
-            {loading ? <Spinner animation="border" size="sm" /> : 'Iniciar Sesión'}
+            {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </Button>
         </Form>
 
         <div className="text-center mt-3">
           <span style={{ color: '#6B5E4A' }}>¿Aún no eres usuario? </span>
-          <Link href="/registro" style={{ color: '#2E7D32', fontWeight: 'bold', textDecoration: 'none' }}>
+          <Button 
+            variant="link" 
+            onClick={() => handleLinkClick('/registro')}
+            style={{ color: '#2E7D32', fontWeight: 'bold', textDecoration: 'none', padding: 0 }}
+          >
             Regístrate aquí
-          </Link>
+          </Button>
         </div>
       </Modal.Body>
     </Modal>

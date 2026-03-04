@@ -77,12 +77,12 @@ const CarruselProductos = () => {
                           alt={producto.nombre}
                           style={{ height: '200px', objectFit: 'cover' }}
                         />
-                        {producto.es_novedad && (
+                        {producto.es_novedad === 1 && (
                           <span className="position-absolute top-0 start-0 badge bg-success m-2">
                             NUEVO
                           </span>
                         )}
-                        {producto.es_oferta && (
+                        {producto.es_oferta === 1 && (
                           <span className="position-absolute top-0 end-0 badge bg-danger m-2">
                             -{Math.round((1 - producto.precio_oferta/producto.precio) * 10) * 10}%
                           </span>

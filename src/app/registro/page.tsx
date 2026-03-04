@@ -1,177 +1,254 @@
 "use client";
 
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
+import LoginForm from '@/components/LoginForm';
 
 export default function RegistroPage() {
   const router = useRouter();
+  const [showLogin, setShowLogin] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    telefono: '',
+    direccion: ''
   });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Validación para teléfono (solo números, máximo 9 dígitos)
+    if (name === 'telefono') {
+      if (value === '' || /^\d{0,9}$/.test(value)) {
+        setFormData(prev => ({ ...prev, [name]: value }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    
-    // Validaciones básicas
-    if (!formData.nombre || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Todos los campos son obligatorios');
-      return;
-    }
-    
+    setLoading(true);
+
+    // Validar contraseñas
     if (formData.password !== formData.confirmPassword) {
       setError('Las contraseñas no coinciden');
+      setLoading(false);
       return;
     }
-    
+
     if (formData.password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres');
+      setLoading(false);
       return;
     }
-    
-    setLoading(true);
-    
+
+    // Validar teléfono (obligatorio)
+    if (!formData.telefono || formData.telefono.length !== 9) {
+      setError('El teléfono es obligatorio y debe tener 9 dígitos');
+      setLoading(false);
+      return;
+    }
+
+    // Validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Por favor, introduce un email válido');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Llamada a la API de registro
       const response = await fetch('/api/auth/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre: formData.nombre,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          telefono: formData.telefono,
+          direccion: formData.direccion
         })
       });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setSuccess('¡Registro exitoso! Redirigiendo al inicio de sesión...');
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccess('¡Registro completado! Serás redirigido al inicio de sesión...');
         setTimeout(() => {
-          router.push('/');
+          setShowLogin(true); // Abre el modal de login después del registro
         }, 2000);
       } else {
-        setError(data.error || 'Error al registrar usuario');
+        setError(result.error || 'Error al registrar usuario');
       }
-    } catch (error) {
+    } catch (err) {
       setError('Error de conexión al servidor');
-      console.error('Error en registro:', error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
-        <Col md={6} lg={5}>
-          <Card className="shadow-sm border-0">
-            <Card.Body className="p-5">
-              <div className="text-center mb-4">
-                <h2 className="fw-bold">Crear Cuenta</h2>
-                <p className="text-muted">Regístrate para empezar a comprar</p>
-              </div>
-              
-              {error && (
-                <Alert variant="danger" className="mb-4">
-                  {error}
-                </Alert>
-              )}
-              
-              {success && (
-                <Alert variant="success" className="mb-4">
-                  {success}
-                </Alert>
-              )}
-              
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Nombre completo</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="nombre"
-                    placeholder="Ej: Juan Pérez"
-                    value={formData.nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+    <>
+      <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
+        <Container>
+          <Row className="justify-content-center">
+            <Col md={8} lg={6}>
+              <Card style={{ borderRadius: '30px', border: 'none', padding: '2rem' }}>
+                <Card.Body>
+                  <h2 className="text-center mb-4" style={{ color: '#2E7D32' }}>
+                    📝 Crear cuenta
+                  </h2>
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Correo electrónico</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    placeholder="ejemplo@email.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                  {success && (
+                    <Alert variant="success" style={{ backgroundColor: '#E8F5E9', borderColor: '#A8E6CF' }}>
+                      {success}
+                    </Alert>
+                  )}
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Contraseña</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    placeholder="Mínimo 6 caracteres"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                  {error && <Alert variant="danger">{error}</Alert>}
 
-                <Form.Group className="mb-4">
-                  <Form.Label>Confirmar contraseña</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Repite tu contraseña"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Nombre completo <span style={{ color: '#FF8B94' }}>*</span>
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        required
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                    </Form.Group>
 
-                <Button
-                  variant="success"
-                  type="submit"
-                  className="w-100 py-2 mb-3"
-                  disabled={loading}
-                >
-                  {loading ? 'Registrando...' : 'Registrarse'}
-                </Button>
-                
-                <div className="text-center">
-                  <p className="text-muted mb-0">
-                    ¿Ya tienes cuenta?{' '}
-                    <Link href="/login" className="text-success text-decoration-none">
-                      Inicia sesión
-                    </Link>
-                  </p>
-                </div>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Email <span style={{ color: '#FF8B94' }}>*</span>
+                      </Form.Label>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Contraseña <span style={{ color: '#FF8B94' }}>*</span>
+                      </Form.Label>
+                      <Form.Control
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                      <Form.Text className="text-muted">
+                        Mínimo 6 caracteres
+                      </Form.Text>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Confirmar contraseña <span style={{ color: '#FF8B94' }}>*</span>
+                      </Form.Label>
+                      <Form.Control
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                      <Form.Text className="text-muted">
+                        Repita la contraseña
+                      </Form.Text>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Teléfono <span style={{ color: '#FF8B94' }}>*</span>
+                      </Form.Label>
+                      <Form.Control
+                        type="tel"
+                        name="telefono"
+                        value={formData.telefono}
+                        onChange={handleChange}
+                        required
+                        maxLength="9"
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                      <Form.Text className="text-muted">
+                        9 dígitos, solo números 
+                      </Form.Text>
+                    </Form.Group>
+
+                    <Form.Group className="mb-4">
+                      <Form.Label style={{ color: '#6B5E4A' }}>
+                        Dirección <span style={{ color: '#9E9E9E' }}>(opcional)</span>
+                      </Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        name="direccion"
+                        value={formData.direccion}
+                        onChange={handleChange}
+                        style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
+                      />
+                    </Form.Group>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      style={{
+                        backgroundColor: '#A8E6CF',
+                        borderColor: '#A8E6CF',
+                        color: '#2E7D32',
+                        borderRadius: '30px',
+                        padding: '0.75rem',
+                        width: '100%',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {loading ? <Spinner animation="border" size="sm" /> : 'Registrarse'}
+                    </Button>
+                  </Form>
+
+                  <div className="text-center mt-4">
+                    <span style={{ color: '#6B5E4A' }}>¿Ya tienes cuenta? </span>
+                    <Button 
+                      variant="link" 
+                      onClick={() => setShowLogin(true)}
+                      style={{ color: '#2E7D32', fontWeight: 'bold', textDecoration: 'none' }}
+                    >
+                      Inicia sesión aquí
+                    </Button>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+
+      {/* Modal de Login */}
+      <LoginForm show={showLogin} onHide={() => setShowLogin(false)} />
+    </>
   );
 }

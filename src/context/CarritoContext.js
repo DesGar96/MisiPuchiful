@@ -89,18 +89,18 @@ export const CarritoProvider = ({ children }) => {
   const totalItems = items.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
-    <CarritoContext.Provider value={{
-      items,
-      total,
-      totalItems,
-      mostrarCarrito,
-      setMostrarCarrito,
-      agregarAlCarrito,
-      eliminarDelCarrito,
-      actualizarCantidad,
-      vaciarCarrito
-    }}>
-      {children}
-    </CarritoContext.Provider>
-  );
+  <CarritoContext.Provider value={{
+    items,
+    total,
+    totalItems,
+    mostrarCarrito,
+    setMostrarCarrito,
+    agregarAlCarrito,
+    eliminarDelCarrito,
+    actualizarCantidad,
+    vaciarCarrito,        // ← Añade esta línea (ya existe la función)
+  }}>
+    {children}
+  </CarritoContext.Provider>
+);
 };

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCarrito } from '@/context/CarritoContext';
 
+
 const ProductGrid = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -229,13 +230,16 @@ const ProductGrid = () => {
                 }}>
                   <Link href={`/tienda/${product.id}`} style={{ textDecoration: 'none' }}>
                     <div style={{ position: 'relative', height: '200px', width: '100%' }}>
+                     
                       <Image
                         src={product.imagen || '/imagenes/placeholder.jpg'}
                         alt={product.nombre}
                         fill
                         sizes="(max-width: 768px) 100vw, 25vw"
                         style={{ objectFit: 'cover' }}
+
                       />
+     
                       {/* OFERTA - basada en precio_oferta */}
                       {product.precio_oferta && product.precio_oferta > 0 && (
                         <Badge style={{ 
