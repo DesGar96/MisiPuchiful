@@ -41,7 +41,7 @@ function ProductGridContent() {
       try {
         setLoading(true);
         
-        // Construir URL con filtros
+        
         let url = '/api/productos?';
         const params = [];
         
@@ -112,7 +112,7 @@ function ProductGridContent() {
 
   return (
     <>
-      {/* CABECERA - Solo el título, sin el gradiente (el gradiente está en el componente padre) */}
+      {/* CABECERA - Solo el título*/}
       <div className="mb-4">
         <h2 className="fw-bold" style={{ color: '#2E7D32', fontSize: '2rem' }}>
           {categoriaActual === 'todos' ? 'Todos los productos' : categoriaActual}
@@ -348,7 +348,8 @@ function ProductGridContent() {
 const ProductGrid = () => {
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '2rem 0' }}>
-      {/* CABECERA - Ahora está aquí, fuera del componente con Suspense */}
+      
+      {/* CABECERA - AHORA FUERA DEL CONTAINER FLUID */}
       <div style={{ 
         background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
         color: '#6B5E4A',
@@ -365,6 +366,7 @@ const ProductGrid = () => {
         </p>
       </div>
 
+      {/* CONTENIDO DENTRO DE CONTAINER */}
       <Container fluid className="px-5">
         <Suspense fallback={
           <div className="text-center py-5">

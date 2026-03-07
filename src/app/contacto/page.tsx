@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import Image from 'next/image';
-import { ContactoFormData } from '@/types/contacto'; // 👈 IMPORTAMOS EL TIPO DEL FORMULARIO
+import { ContactoFormData } from '@/types/contacto';
 
 export default function ContactoPage() {
   const [formData, setFormData] = useState<ContactoFormData>({
@@ -52,25 +52,28 @@ export default function ContactoPage() {
 
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
-      <Container fluid className="px-5">
-        
-        {/* CABECERA */}
-        <div style={{ 
-          background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
-          color: '#6B5E4A',
-          padding: '3rem 0',
-          marginBottom: '3rem',
-          borderRadius: '0 0 50px 50px',
-          textAlign: 'center'
-        }}>
+      
+      {/* CABECERA */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
+        color: '#6B5E4A',
+        padding: '3rem 0',
+        marginBottom: '3rem',
+        borderRadius: '0 0 50px 50px',
+        textAlign: 'center',
+        width: '100%'
+      }}>
+        <Container>
           <h1 className="display-3 fw-bold mb-3" style={{ color: '#2E7D32' }}>
             📬 Contáctanos
           </h1>
           <p className="lead fs-4" style={{ color: '#6B5E4A' }}>
             ¿Tienes alguna pregunta o sugerencia? ¡Escríbenos!
           </p>
-        </div>
+        </Container>
+      </div>
 
+      <Container>
         <Row className="justify-content-center">
           <Col lg={8}>
             <Card className="border-0 shadow-lg" style={{ 

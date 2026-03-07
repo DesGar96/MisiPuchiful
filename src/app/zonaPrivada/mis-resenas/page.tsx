@@ -433,7 +433,7 @@ export default function MisResenasPage() {
                             />
                           ))}
                         </div>
-                        {resena.editada && (
+                        {resena.editada === true &&(
                           <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32', fontSize: '0.7rem', marginTop: '0.3rem' }}>
                             ✏️ Editada
                           </Badge>

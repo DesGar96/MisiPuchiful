@@ -11,7 +11,7 @@ import {
   ReservaFormData, 
   DisponibilidadResponse,
   ReservaApiResponse 
-} from '@/types/reserva'; // 👈 IMPORTAMOS LOS TIPOS
+} from '@/types/reserva';
 
 export default function ReservasPage() {
   const router = useRouter();
@@ -31,7 +31,6 @@ export default function ReservasPage() {
   const [reservaId, setReservaId] = useState<number | null>(null);
   const [cargandoHorarios, setCargandoHorarios] = useState<boolean>(false);
   
-  // Estado para la notificación
   const [notificacion, setNotificacion] = useState<{
     mostrar: boolean;
     tipo: 'exito' | 'error';
@@ -60,7 +59,6 @@ export default function ReservasPage() {
     }
   }, [user, authLoading, router]);
 
-  // Cargar horarios disponibles cuando se selecciona fecha y servicio
   useEffect(() => {
     if (formData.fecha && formData.tipo_servicio) {
       fetchHorariosDisponibles();
@@ -108,7 +106,6 @@ export default function ReservasPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Validación: no permitir reservas para hoy
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
     
@@ -163,7 +160,6 @@ export default function ReservasPage() {
     }
   };
 
-  // Calcular la fecha mínima (mañana)
   const getMinDate = (): string => {
     const manana = new Date();
     manana.setDate(manana.getDate() + 1);
@@ -182,23 +178,26 @@ export default function ReservasPage() {
     return (
       <>
         <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
-          <Container>
-            <div style={{ 
-              background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
-              color: '#6B5E4A',
-              padding: '3rem 0',
-              marginBottom: '3rem',
-              borderRadius: '0 0 50px 50px',
-              textAlign: 'center'
-            }}>
+          {/* CABECERA A LO ANCHO - FUERA DEL CONTAINER */}
+          <div style={{ 
+            background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
+            color: '#6B5E4A',
+            padding: '3rem 0',
+            marginBottom: '3rem',
+            borderRadius: '0 0 50px 50px',
+            textAlign: 'center'
+          }}>
+            <Container>
               <h1 className="display-4 fw-bold mb-3" style={{ color: '#2E7D32' }}>
                 📅 Reserva tu cita
               </h1>
               <p className="lead fs-4" style={{ color: '#6B5E4A' }}>
                 Peluquería y consultas veterinarias para tus peludos
               </p>
-            </div>
+            </Container>
+          </div>
 
+          <Container>
             <Row className="justify-content-center">
               <Col md={8} lg={6}>
                 <Card className="border-0 shadow-lg text-center" style={{ borderRadius: '30px', padding: '3rem' }}>
@@ -260,7 +259,6 @@ export default function ReservasPage() {
           </Container>
         </div>
 
-        {/* Modal de Login */}
         <LoginForm show={showLogin} onHide={() => setShowLogin(false)} />
       </>
     );
@@ -268,23 +266,27 @@ export default function ReservasPage() {
 
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
-      <Container>
-        <div style={{ 
-          background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
-          color: '#6B5E4A',
-          padding: '3rem 0',
-          marginBottom: '3rem',
-          borderRadius: '0 0 50px 50px',
-          textAlign: 'center'
-        }}>
+      
+      {/* CABECERA A LO ANCHO - FUERA DEL CONTAINER */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
+        color: '#6B5E4A',
+        padding: '3rem 0',
+        marginBottom: '3rem',
+        borderRadius: '0 0 50px 50px',
+        textAlign: 'center'
+      }}>
+        <Container>
           <h1 className="display-4 fw-bold mb-3" style={{ color: '#2E7D32' }}>
             📅 Reserva tu cita
           </h1>
           <p className="lead fs-4" style={{ color: '#6B5E4A' }}>
             Peluquería y consultas veterinarias para tus peludos
           </p>
-        </div>
-        
+        </Container>
+      </div>
+
+      <Container>
         <Row className="g-4">
           <Col lg={7}>
             <Card className="border-0 shadow-lg" style={{ borderRadius: '30px', overflow: 'hidden' }}>
@@ -510,7 +512,6 @@ export default function ReservasPage() {
           </Col>
         </Row>
 
-        {/* Notificación flotante */}
         <Notificacion
           tipo={notificacion.tipo}
           mensaje={notificacion.mensaje}
