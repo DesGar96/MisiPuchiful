@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Container, Row, Col, Badge, Spinner, Alert } from "react-bootstrap";
 import Link from "next/link";
 import Image from "next/image";
-import { BlogPost } from "@/types/blog"; // 👈 IMPORTAMOS EL TIPO
+import { BlogPost } from "@/types/blog"; 
 
 export default function PostPage() {
   const { id } = useParams();
