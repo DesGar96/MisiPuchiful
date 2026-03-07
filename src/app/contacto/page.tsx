@@ -59,7 +59,7 @@ export default function ContactoPage() {
         color: '#6B5E4A',
         padding: '3rem 0',
         marginTop: 0,
-        marginBottom: 0,
+        marginBottom: '3rem',
         borderRadius: '0 0 50px 50px',
         textAlign: 'center',
         width: '100%'
