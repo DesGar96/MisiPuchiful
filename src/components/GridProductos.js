@@ -344,7 +344,7 @@ function ProductGridContent() {
   );
 }
 
-// Componente principal con Suspense
+// Componente principal 
 const ProductGrid = () => {
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: 0 }}>

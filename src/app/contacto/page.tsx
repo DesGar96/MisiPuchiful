@@ -51,14 +51,15 @@ export default function ContactoPage() {
   };
 
   return (
-    <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
+    <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: 0 }}>
       
       {/* CABECERA */}
       <div style={{ 
         background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
         color: '#6B5E4A',
         padding: '3rem 0',
-        marginBottom: '3rem',
+        marginTop: 0,
+        marginBottom: 0,
         borderRadius: '0 0 50px 50px',
         textAlign: 'center',
         width: '100%'
