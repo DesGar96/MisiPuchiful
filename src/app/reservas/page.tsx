@@ -6,13 +6,18 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import Notificacion from '@/components/Notificacion';
-import LoginForm from '@/components/LoginForm'; // ← IMPORTANTE: AÑADIDO
+import LoginForm from '@/components/LoginForm';
+import { 
+  ReservaFormData, 
+  DisponibilidadResponse,
+  ReservaApiResponse 
+} from '@/types/reserva'; // 👈 IMPORTAMOS LOS TIPOS
 
 export default function ReservasPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [showLogin, setShowLogin] = useState(false); // ← AÑADIDO
-  const [formData, setFormData] = useState({
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [formData, setFormData] = useState<ReservaFormData>({
     tipo_servicio: '',
     tipo_mascota: '',
     fecha: '',
@@ -21,19 +26,23 @@ export default function ReservasPage() {
     observaciones: ''
   });
   
-  const [horariosDisponibles, setHorariosDisponibles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [reservaId, setReservaId] = useState(null);
-  const [cargandoHorarios, setCargandoHorarios] = useState(false);
+  const [horariosDisponibles, setHorariosDisponibles] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [reservaId, setReservaId] = useState<number | null>(null);
+  const [cargandoHorarios, setCargandoHorarios] = useState<boolean>(false);
   
   // Estado para la notificación
-  const [notificacion, setNotificacion] = useState({
+  const [notificacion, setNotificacion] = useState<{
+    mostrar: boolean;
+    tipo: 'exito' | 'error';
+    mensaje: string;
+  }>({
     mostrar: false,
     tipo: 'exito',
     mensaje: ''
   });
 
-  const mostrarNotificacion = (tipo, mensaje) => {
+  const mostrarNotificacion = (tipo: 'exito' | 'error', mensaje: string) => {
     setNotificacion({
       mostrar: true,
       tipo,
@@ -67,7 +76,7 @@ export default function ReservasPage() {
       const response = await fetch(
         `/api/reservas/disponibilidad?fecha=${formData.fecha}&tipo_servicio=${formData.tipo_servicio}`
       );
-      const data = await response.json();
+      const data: DisponibilidadResponse = await response.json();
       
       if (data.success) {
         setHorariosDisponibles(data.horarios || []);
@@ -82,7 +91,7 @@ export default function ReservasPage() {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -95,7 +104,7 @@ export default function ReservasPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
@@ -131,9 +140,9 @@ export default function ReservasPage() {
         body: JSON.stringify(formData)
       });
       
-      const result = await response.json();
+      const result: ReservaApiResponse = await response.json();
       
-      if (result.success) {
+      if (result.success && result.reservaId) {
         setReservaId(result.reservaId);
         mostrarNotificacion('exito', `¡Reserva #${result.reservaId} creada con éxito!`);
         setFormData({
@@ -155,7 +164,7 @@ export default function ReservasPage() {
   };
 
   // Calcular la fecha mínima (mañana)
-  const getMinDate = () => {
+  const getMinDate = (): string => {
     const manana = new Date();
     manana.setDate(manana.getDate() + 1);
     return manana.toISOString().split('T')[0];
@@ -210,7 +219,7 @@ export default function ReservasPage() {
                     
                     <div className="d-flex gap-3 justify-content-center">
                       <Button
-                        onClick={() => setShowLogin(true)} // ← CORREGIDO
+                        onClick={() => setShowLogin(true)}
                         style={{
                           backgroundColor: '#A8E6CF',
                           borderColor: '#A8E6CF',

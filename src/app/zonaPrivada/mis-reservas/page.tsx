@@ -6,16 +6,25 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ModalConfirmacion from '@/components/ModalConfirmacion';
+import { 
+  ReservaUsuario, 
+  ReservaApiResponse, 
+  CancelarReservaResponse,
+  MensajeNotificacion,
+  EstadoReserva,
+  TipoServicio,
+  TipoMascota
+} from '@/types/reserva';
 
 export default function MisReservasPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [reservas, setReservas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
-  const [mensaje, setMensaje] = useState('');
+  const [reservas, setReservas] = useState<ReservaUsuario[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [reservaSeleccionada, setReservaSeleccionada] = useState<ReservaUsuario | null>(null);
+  const [mensaje, setMensaje] = useState<MensajeNotificacion | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -28,8 +37,8 @@ export default function MisReservasPage() {
       try {
         setLoading(true);
         const response = await fetch('/api/usuarios/reservas');
-        const result = await response.json();
-        if (result.success) {
+        const result: ReservaApiResponse = await response.json();
+        if (result.success && result.data) {
           setReservas(result.data);
         } else {
           setError('Error al cargar las reservas');
@@ -46,27 +55,42 @@ export default function MisReservasPage() {
     }
   }, [user]);
 
-  const getColorEstado = (estado) => {
-    const colores = {
+  const getColorEstado = (estado: EstadoReserva): string => {
+    const colores: Record<EstadoReserva, string> = {
       pendiente: '#FFD3B6',
       confirmada: '#A8E6CF',
       completada: '#A8E6CF',
-      cancelada: '#FFAAA5'
+      cancelada: '#FFAAA5',
+      modificada: '#FDFD97'
     };
     return colores[estado] || '#E8F5E9';
   };
 
-  const getTextoEstado = (estado) => {
-    const textos = {
+  const getTextoEstado = (estado: EstadoReserva): string => {
+    const textos: Record<EstadoReserva, string> = {
       pendiente: '⏳ Pendiente',
       confirmada: '✅ Confirmada',
       completada: '✨ Completada',
-      cancelada: '❌ Cancelada'
+      cancelada: '❌ Cancelada',
+      modificada: '🔄 Modificada'
     };
     return textos[estado] || estado;
   };
 
-  const handleCancelarClick = (reserva) => {
+  const getNombreServicio = (tipo: TipoServicio): string => {
+    return tipo === 'peluqueria' ? '🐕 Peluquería' : '🏥 Veterinario';
+  };
+
+  const getNombreMascota = (tipo: TipoMascota): string => {
+    const nombres: Record<TipoMascota, string> = {
+      perro: 'Perro',
+      gato: 'Gato',
+      otro: 'Otras especies'
+    };
+    return nombres[tipo] || tipo;
+  };
+
+  const handleCancelarClick = (reserva: ReservaUsuario) => {
     setReservaSeleccionada(reserva);
     setShowConfirmModal(true);
   };
@@ -83,15 +107,18 @@ export default function MisReservasPage() {
         })
       });
 
-      const result = await response.json();
+      const result: CancelarReservaResponse = await response.json();
+      
       if (result.success) {
         setMensaje({ tipo: 'success', texto: 'Reserva cancelada correctamente' });
         // Recargar reservas
         const res = await fetch('/api/usuarios/reservas');
-        const data = await res.json();
-        if (data.success) setReservas(data.data);
+        const data: ReservaApiResponse = await res.json();
+        if (data.success && data.data) {
+          setReservas(data.data);
+        }
       } else {
-        setMensaje({ tipo: 'danger', texto: 'Error al cancelar la reserva' });
+        setMensaje({ tipo: 'danger', texto: result.error || 'Error al cancelar la reserva' });
       }
     } catch (error) {
       console.error('Error:', error);
@@ -115,7 +142,7 @@ export default function MisReservasPage() {
       <Container>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="fw-bold" style={{ color: '#2E7D32' }}>📅 Mis Reservas</h1>
-          <Link href="/reservas">
+          <Link href="/reservas" passHref>
             <Button style={{ backgroundColor: '#A8E6CF', borderColor: '#A8E6CF', color: '#2E7D32' }}>
               + Nueva reserva
             </Button>
@@ -141,7 +168,7 @@ export default function MisReservasPage() {
             <Card.Body>
               <span style={{ fontSize: '4rem' }}>📅</span>
               <h4 className="mt-3" style={{ color: '#2E7D32' }}>No tienes reservas</h4>
-              <Link href="/reservas">
+              <Link href="/reservas" passHref>
                 <Button style={{ backgroundColor: '#A8E6CF', borderColor: '#A8E6CF', color: '#2E7D32', marginTop: '1rem' }}>
                   Reservar ahora
                 </Button>
@@ -158,11 +185,11 @@ export default function MisReservasPage() {
                       <div>
                         <h5 style={{ color: '#2E7D32' }}>#{reserva.id}</h5>
                         <p className="mb-1">
-                          <strong>Servicio:</strong> {reserva.tipo_servicio === 'peluqueria' ? '🐕 Peluquería' : '🏥 Veterinario'}
+                          <strong>Servicio:</strong> {getNombreServicio(reserva.tipo_servicio)}
                         </p>
                         <p className="mb-1">
                           <strong>Mascota:</strong> {reserva.mascota_nombre} 
-                          {reserva.tipo_mascota && ` (${reserva.tipo_mascota === 'perro' ? 'Perro' : reserva.tipo_mascota === 'gato' ? 'Gato' : 'Otras especies'})`}
+                          {reserva.tipo_mascota && ` (${getNombreMascota(reserva.tipo_mascota)})`}
                         </p>
                         <p className="mb-1">
                           <strong>Fecha:</strong> {new Date(reserva.fecha_reserva).toLocaleDateString('es-ES')}
@@ -216,7 +243,7 @@ export default function MisReservasPage() {
           onConfirm={handleCancelarConfirm}
           titulo="Cancelar reserva"
           mensaje={reservaSeleccionada ? 
-            `¿Estás seguro de cancelar la reserva de ${reservaSeleccionada.tipo_servicio === 'peluqueria' ? 'peluquería' : 'veterinario'} para ${reservaSeleccionada.mascota_nombre}?` 
+            `¿Estás seguro de cancelar la reserva de ${getNombreServicio(reservaSeleccionada.tipo_servicio).toLowerCase()} para ${reservaSeleccionada.mascota_nombre}?` 
             : '¿Estás seguro de cancelar esta reserva?'}
           icono={reservaSeleccionada?.tipo_servicio === 'peluqueria' ? '✂️' : '🏥'}
         />

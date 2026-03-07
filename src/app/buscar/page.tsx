@@ -5,15 +5,16 @@ import { Container, Row, Col, Card, Badge, Spinner, Alert } from 'react-bootstra
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ResultadoBusqueda } from '@/types/buscar'; // 👈 IMPORTAMOS EL TIPO
 
 export default function BuscarPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
   
-  const [resultados, setResultados] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [debug, setDebug] = useState(null);
+  const [resultados, setResultados] = useState<ResultadoBusqueda[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [debug, setDebug] = useState<any>(null);
 
   useEffect(() => {
     const fetchResultados = async () => {
@@ -128,9 +129,11 @@ export default function BuscarPage() {
             </div>
 
             <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-              {resultados.map((item, index) => (
-                <Col key={`${item.tipo}-${item.id || index}`}>
-                  {item.tipo === 'producto' ? (
+              {resultados.map((item, index) => {
+                const key = `${item.tipo}-${item.id || index}`;
+                
+                return item.tipo === 'producto' ? (
+                  <Col key={key}>
                     <Link href={`/tienda/${item.id}`} style={{ textDecoration: 'none' }}>
                       <Card className="h-100 shadow-sm hover-effect" style={{ 
                         borderRadius: '25px',
@@ -160,7 +163,7 @@ export default function BuscarPage() {
                               🔥 OFERTA
                             </div>
                           )}
-                          {item.es_novedad == 1 && (
+                          {item.es_novedad === 1 && (
                             <div style={{
                               position: 'absolute',
                               top: '10px',
@@ -197,7 +200,9 @@ export default function BuscarPage() {
                         </Card.Body>
                       </Card>
                     </Link>
-                  ) : (
+                  </Col>
+                ) : (
+                  <Col key={key}>
                     <Link href={`/blog/${item.id}`} style={{ textDecoration: 'none' }}>
                       <Card className="h-100 shadow-sm hover-effect" style={{ 
                         borderRadius: '25px',
@@ -229,9 +234,9 @@ export default function BuscarPage() {
                         </Card.Body>
                       </Card>
                     </Link>
-                  )}
-                </Col>
-              ))}
+                  </Col>
+                );
+              })}
             </Row>
           </>
         )}

@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CustomBadge from "@/components/CustomBadge"
+import CustomBadge from "@/components/CustomBadge";
 import { useParams } from "next/navigation";
 import { Container, Row, Col, Badge, Spinner, Alert } from "react-bootstrap";
 import Link from "next/link";
 import Image from "next/image";
+import { BlogPost } from "@/types/blog"; // 👈 IMPORTAMOS EL TIPO
 
 export default function PostPage() {
   const { id } = useParams();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -34,6 +35,15 @@ export default function PostPage() {
 
     if (id) fetchPost();
   }, [id]);
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
 
   if (loading) {
     return (
@@ -85,32 +95,62 @@ export default function PostPage() {
           </div>
 
           <div className="mb-4">
-            <Badge bg="success" className="me-2">
-              {post.categoria}
-            </Badge>
-            <Badge bg="light" text="dark"></Badge>
-            <CustomBadge
-              color="melocoton"
-              style={{ position: "absolute", top: "15px", left: "15px" }}
+            <Badge
+              style={{
+                backgroundColor: '#A8E6CF',
+                color: '#2E7D32',
+                padding: '0.5rem 1rem',
+                borderRadius: '30px',
+                marginRight: '0.5rem'
+              }}
             >
-            </CustomBadge>
+              {post.categoria || 'General'}
+            </Badge>
+            <Badge
+              style={{
+                backgroundColor: '#F8F6F2',
+                color: '#6B5E4A',
+                padding: '0.5rem 1rem',
+                borderRadius: '30px'
+              }}
+            >
+              {formatDate(post.fecha_publicacion)}
+            </Badge>
           </div>
 
-          <h1 className="display-5 fw-bold mb-4">{post.titulo}</h1>
+          <h1 className="display-5 fw-bold mb-4" style={{ color: '#2E7D32' }}>
+            {post.titulo}
+          </h1>
 
           <div className="d-flex align-items-center mb-4">
-            <div className="bg-success bg-opacity-10 rounded-circle p-3 me-3">
-              <span className="text-success fw-bold">
-                {post.autor?.charAt(0) || "M"}
+            <div
+              style={{
+                backgroundColor: '#E8F5E9',
+                borderRadius: '50%',
+                width: '50px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: '15px'
+              }}
+            >
+              <span style={{ color: '#2E7D32', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                {(post as any).autor?.charAt(0) || "M"}
               </span>
             </div>
             <div>
-              <p className="mb-0 fw-bold">{post.autor}</p>
-              <small className="text-muted">Misipuchiful</small>
+              <p className="mb-0 fw-bold" style={{ color: '#2E7D32' }}>
+                {(post as any).autor || "Misifú y Puchi"}
+              </p>
+              <small style={{ color: '#9E9E9E' }}>Misipuchiful</small>
             </div>
           </div>
 
-          <div className="blog-content fs-5 lh-lg">
+          <div
+            className="blog-content fs-5 lh-lg"
+            style={{ color: '#6B5E4A' }}
+          >
             {post.contenido.split("\n").map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}

@@ -4,18 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
+import { UsuarioPerfil, PerfilFormData, PerfilApiResponse } from '@/types/perfil'; // 👈 IMPORTAMOS LOS TIPOS
 
 export default function PerfilPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [editMode, setEditMode] = useState(false);
-  const [cambiandoPassword, setCambiandoPassword] = useState(false);
+  const [userData, setUserData] = useState<UsuarioPerfil | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [cambiandoPassword, setCambiandoPassword] = useState<boolean>(false);
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PerfilFormData>({
     nombre: '',
     email: '',
     telefono: '',
@@ -45,9 +46,9 @@ export default function PerfilPage() {
     try {
       setLoading(true);
       const response = await fetch('/api/usuarios/perfil');
-      const data = await response.json();
+      const data: PerfilApiResponse = await response.json();
       
-      if (data.success) {
+      if (data.success && data.user) {
         setUserData(data.user);
         setFormData({
           nombre: data.user.nombre || '',
@@ -74,7 +75,7 @@ export default function PerfilPage() {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
     // Validaciones específicas
@@ -95,7 +96,7 @@ export default function PerfilPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -144,7 +145,7 @@ export default function PerfilPage() {
       });
       
       const data = await response.json();
-      
+
       if (data.success) {
         setSuccess('Datos actualizados correctamente');
         setEditMode(false);
@@ -284,7 +285,7 @@ export default function PerfilPage() {
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleChange}
-                      maxLength="9"
+                      maxLength={9}
                       placeholder="600123456"
                       style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                     />
@@ -360,7 +361,7 @@ export default function PerfilPage() {
                           name="codigo_postal"
                           value={formData.codigo_postal}
                           onChange={handleChange}
-                          maxLength="5"
+                          maxLength={5}
                           placeholder="28001"
                           style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                         />
@@ -385,7 +386,7 @@ export default function PerfilPage() {
                       type="checkbox"
                       label="Cambiar contraseña"
                       checked={cambiandoPassword}
-                      onChange={(e) => setCambiandoPassword(e.target.checked)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCambiandoPassword(e.target.checked)}
                     />
                   </div>
 

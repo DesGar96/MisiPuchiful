@@ -6,14 +6,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { PedidoUsuario, PedidosApiResponse } from '@/types/mis-pedidos';
+import { EstadoPedido, MetodoPago } from '@/types/pedido';
 
 export default function MisPedidosPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [pedidos, setPedidos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [expandido, setExpandido] = useState(null);
+  const [pedidos, setPedidos] = useState<PedidoUsuario[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [expandido, setExpandido] = useState<number | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -26,9 +28,9 @@ export default function MisPedidosPage() {
       try {
         setLoading(true);
         const response = await fetch('/api/usuarios/pedidos');
-        const result = await response.json();
+        const result: PedidosApiResponse = await response.json();
         
-        if (result.success) {
+        if (result.success && result.data) {
           setPedidos(result.data);
         } else {
           setError('Error al cargar los pedidos');
@@ -45,8 +47,8 @@ export default function MisPedidosPage() {
     }
   }, [user]);
 
-  const getEstadoBadge = (estado) => {
-    const colores = {
+  const getEstadoBadge = (estado: EstadoPedido) => {
+    const colores: Record<EstadoPedido, { bg: string; text: string; label: string }> = {
       pendiente: { bg: '#FFD3B6', text: '#6B5E4A', label: 'Pendiente' },
       procesando: { bg: '#FDFD97', text: '#6B5E4A', label: 'Procesando' },
       enviado: { bg: '#A8E6CF', text: '#2E7D32', label: 'Enviado' },
@@ -68,8 +70,8 @@ export default function MisPedidosPage() {
     );
   };
 
-  const getMetodoPagoLabel = (metodo) => {
-    const metodos = {
+  const getMetodoPagoLabel = (metodo: MetodoPago): string => {
+    const metodos: Record<MetodoPago, string> = {
       contrareembolso: '💰 Contra reembolso',
       bizum: '📱 Bizum',
       tarjeta: '💳 Tarjeta'
@@ -77,8 +79,8 @@ export default function MisPedidosPage() {
     return metodos[metodo] || metodo;
   };
 
-  const formatDate = (dateString) => {
-    const options = { 
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric',
@@ -102,7 +104,7 @@ export default function MisPedidosPage() {
       <Container>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="fw-bold" style={{ color: '#2E7D32' }}>📦 Mis Pedidos</h1>
-          <Link href="/tienda">
+          <Link href="/tienda" passHref>
             <Button style={{ backgroundColor: '#A8E6CF', borderColor: '#A8E6CF', color: '#2E7D32' }}>
               Seguir comprando
             </Button>
@@ -117,7 +119,7 @@ export default function MisPedidosPage() {
               <span style={{ fontSize: '4rem' }}>🛒</span>
               <h4 className="mt-3" style={{ color: '#2E7D32' }}>No tienes pedidos aún</h4>
               <p className="text-muted">¡Realiza tu primera compra en nuestra tienda!</p>
-              <Link href="/tienda">
+              <Link href="/tienda" passHref>
                 <Button style={{ backgroundColor: '#A8E6CF', borderColor: '#A8E6CF', color: '#2E7D32', marginTop: '1rem' }}>
                   Ir a la tienda
                 </Button>
@@ -192,8 +194,10 @@ export default function MisPedidosPage() {
                                         />
                                       </div>
                                     )}
-                                    <Link href={`/tienda/${detalle.producto_id}`} style={{ color: '#2E7D32', textDecoration: 'none' }}>
-                                      {detalle.producto_nombre}
+                                    <Link href={`/tienda/${detalle.producto_id}`} passHref>
+                                      <span style={{ color: '#2E7D32', textDecoration: 'none', cursor: 'pointer' }}>
+                                        {detalle.producto_nombre}
+                                      </span>
                                     </Link>
                                   </div>
                                 </td>
@@ -205,7 +209,7 @@ export default function MisPedidosPage() {
                           </tbody>
                           <tfoot>
                             <tr>
-                              <td colSpan="3" className="text-end"><strong>Total:</strong></td>
+                              <td colSpan={3} className="text-end"><strong>Total:</strong></td>
                               <td><strong style={{ color: '#2E7D32' }}>{pedido.total}€</strong></td>
                             </tr>
                           </tfoot>

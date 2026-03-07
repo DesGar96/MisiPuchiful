@@ -4,53 +4,68 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import LoginForm from '@/components/LoginForm';
+import { RecuperarPasswordFormData } from '@/types/recuperar-password'; // 👈 IMPORTAMOS EL TIPO
 
 export default function RecuperarPasswordPage() {
   const router = useRouter();
-  const [showLogin, setShowLogin] = useState(false);
-  const [step, setStep] = useState(1); // 1: solicitar datos, 2: cambiar contraseña
-  const [formData, setFormData] = useState({
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [step, setStep] = useState<number>(1); // 1: solicitar datos, 2: cambiar contraseña
+  const [formData, setFormData] = useState<RecuperarPasswordFormData>({
     email: '',
     telefono: '',
     nuevaPassword: '',
     confirmarPassword: ''
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const verificarDatos = async (e) => {
+  const verificarDatos = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      // Aquí iría tu lógica de verificación
-      // Por ahora, pasamos al paso 2 si hay email y teléfono
-      if (formData.email && formData.telefono) {
-        setStep(2);
-      } else {
+      // Validación básica
+      if (!formData.email || !formData.telefono) {
         setError('Por favor completa todos los campos');
+        setLoading(false);
+        return;
       }
+
+      // Aquí iría tu lógica de verificación con la API
+      // Por ahora, simulamos verificación exitosa
+      setTimeout(() => {
+        setStep(2);
+        setLoading(false);
+      }, 1000);
+      
     } catch (err) {
       setError('Error al verificar los datos');
-    } finally {
       setLoading(false);
     }
   };
 
-  const cambiarPassword = async (e) => {
+  const cambiarPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    // Validar que las contraseñas coincidan
     if (formData.nuevaPassword !== formData.confirmarPassword) {
       setError('Las contraseñas no coinciden');
+      setLoading(false);
+      return;
+    }
+
+    // Validar longitud mínima
+    if (formData.nuevaPassword.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
       setLoading(false);
       return;
     }

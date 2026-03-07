@@ -8,18 +8,57 @@ import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import DireccionForm from '@/components/DireccionForm';
+import { MetodoPago } from '@/types/pedido';
+
+// Definición de tipos para el formulario
+interface FormData {
+  tipoVia: string;
+  nombreVia: string;
+  numeroVia: string;
+  piso: string;
+  codigoPostal: string;
+  ciudad: string;
+  telefono: string;
+  email: string;
+  observaciones: string;
+  metodoPago: MetodoPago;
+  nombreTarjeta: string;
+  numeroTarjeta: string;
+  fechaExpiracion: string;
+  cvv: string;
+}
+
+interface UserData {
+  telefono?: string;
+  email?: string;
+  tipo_via?: string;
+  nombre_via?: string;
+  numero_via?: string;
+  piso?: string;
+  codigo_postal?: string;
+  ciudad?: string;
+}
+
+// Tipo para los items del carrito
+interface CarritoItem {
+  id: number;
+  nombre: string;
+  precio: number;
+  imagen: string | null;
+  cantidad: number;
+}
 
 export default function FinalizarCompraPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { items, total, vaciarCarrito } = useCarrito();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [pedidoId, setPedidoId] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [redirectCountdown, setRedirectCountdown] = useState(3);
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<boolean>(false);
+  const [pedidoId, setPedidoId] = useState<number | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [redirectCountdown, setRedirectCountdown] = useState<number>(3);
+  const [formData, setFormData] = useState<FormData>({
     tipoVia: '',
     nombreVia: '',
     numeroVia: '',
@@ -49,7 +88,6 @@ export default function FinalizarCompraPage() {
       const result = await response.json();
       if (result.success) {
         setUserData(result.user);
-        // Rellenar formulario con todos los datos del usuario
         setFormData(prev => ({
           ...prev,
           telefono: result.user.telefono || '',
@@ -69,7 +107,7 @@ export default function FinalizarCompraPage() {
 
   // Efecto para la redirección automática
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout;
     if (success && redirectCountdown > 0) {
       timer = setTimeout(() => {
         setRedirectCountdown(prev => prev - 1);
@@ -86,22 +124,19 @@ export default function FinalizarCompraPage() {
     }
   }, [user, items, router, success]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
     // Validaciones específicas
     if (name === 'telefono') {
-      
       if (value === '' || /^\d{0,9}$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
     } else if (name === 'numeroVia') {
-
       if (value === '' || /^\d*$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
     } else if (name === 'codigoPostal') {
-      
       if (value === '' || /^\d{0,5}$/.test(value)) {
         setFormData(prev => ({ ...prev, [name]: value }));
       }
@@ -110,7 +145,7 @@ export default function FinalizarCompraPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -184,7 +219,7 @@ export default function FinalizarCompraPage() {
     }
   };
 
-  const construirDireccionCompleta = () => {
+  const construirDireccionCompleta = (): string => {
     const partes = [
       formData.tipoVia,
       formData.nombreVia,
@@ -331,13 +366,13 @@ export default function FinalizarCompraPage() {
                               name="numeroTarjeta"
                               value={formData.numeroTarjeta}
                               onChange={(e) => {                                
-                              const value = e.target.value.replace(/[^\d]/g, '');
-                              const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                                const value = e.target.value.replace(/[^\d]/g, '');
+                                const formatted = value.replace(/(\d{4})(?=\d)/g, '$1 ');
                                 setFormData({...formData, numeroTarjeta: formatted});
-                             }}
+                              }}
                               required={formData.metodoPago === 'tarjeta'}
                               placeholder="4242 4242 4242 4242"
-                              maxLength="19"
+                              maxLength={19}
                               style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                             />
                           </Form.Group>
@@ -353,12 +388,12 @@ export default function FinalizarCompraPage() {
                                 let value = e.target.value.replace(/[^\d]/g, '');
                                 if (value.length >= 2) {
                                   value = value.slice(0, 2) + '/' + value.slice(2, 4);
-                                  }
-                                  setFormData({...formData, fechaExpiracion: value});
-                                }}
+                                }
+                                setFormData({...formData, fechaExpiracion: value});
+                              }}
                               required={formData.metodoPago === 'tarjeta'}
                               placeholder="MM/AA"
-                              maxLength="5"
+                              maxLength={5}
                               style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                             />
                           </Form.Group>
@@ -370,10 +405,13 @@ export default function FinalizarCompraPage() {
                               type="text"
                               name="cvv"
                               value={formData.cvv}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/[^\d]/g, '').slice(0, 3);
+                                setFormData({...formData, cvv: value});
+                              }}
                               required={formData.metodoPago === 'tarjeta'}
                               placeholder="123"
-                              maxLength="3"
+                              maxLength={3}
                               style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                             />
                           </Form.Group>
@@ -409,7 +447,7 @@ export default function FinalizarCompraPage() {
               <Card className="border-0 shadow-sm" style={{ borderRadius: '30px', padding: '1.5rem', position: 'sticky', top: '100px' }}>
                 <h4 style={{ color: '#2E7D32', marginBottom: '1.5rem' }}>🛒 Resumen del pedido</h4>
                 
-                {items.map((item) => (
+                {(items as CarritoItem[]).map((item) => (
                   <div key={item.id} className="d-flex align-items-center mb-3">
                     <div style={{ width: '50px', height: '50px', position: 'relative', marginRight: '10px' }}>
                       <Image

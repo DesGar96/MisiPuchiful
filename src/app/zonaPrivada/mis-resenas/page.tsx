@@ -8,26 +8,38 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FaStar, FaEdit } from 'react-icons/fa';
 import Notificacion from '@/components/Notificacion';
+import { 
+  ResenasEstado, 
+  ResenaEscrita, 
+  ProductoPendiente,
+  ResenaFormData,
+  ResenasApiResponse,
+  EnviarResenaResponse 
+} from '@/types/resena';
 
 export default function MisResenasPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [resenas, setResenas] = useState({ escritas: [], pendientes: [] });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [mostrarFormulario, setMostrarFormulario] = useState(null);
-  const [editandoResena, setEditandoResena] = useState(null);
-  const [formResena, setFormResena] = useState({ puntuacion: 5, comentario: '' });
-  const [enviando, setEnviando] = useState(false);
+  const [resenas, setResenas] = useState<ResenasEstado>({ escritas: [], pendientes: [] });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState<number | null>(null);
+  const [editandoResena, setEditandoResena] = useState<number | null>(null);
+  const [formResena, setFormResena] = useState<ResenaFormData>({ puntuacion: 5, comentario: '' });
+  const [enviando, setEnviando] = useState<boolean>(false);
   
   // Estados para la notificación
-  const [notificacion, setNotificacion] = useState({
+  const [notificacion, setNotificacion] = useState<{
+    mostrar: boolean;
+    tipo: 'exito' | 'error';
+    mensaje: string;
+  }>({
     mostrar: false,
     tipo: 'exito',
     mensaje: ''
   });
 
-  const mostrarNotificacion = (tipo, mensaje) => {
+  const mostrarNotificacion = (tipo: 'exito' | 'error', mensaje: string) => {
     setNotificacion({
       mostrar: true,
       tipo,
@@ -50,9 +62,9 @@ export default function MisResenasPage() {
       try {
         setLoading(true);
         const response = await fetch('/api/usuarios/resenas');
-        const result = await response.json();
+        const result: ResenasApiResponse = await response.json();
         
-        if (result.success) {
+        if (result.success && result.data) {
           setResenas(result.data);
         } else {
           setError('Error al cargar las reseñas');
@@ -69,7 +81,7 @@ export default function MisResenasPage() {
     }
   }, [user]);
 
-  const enviarResena = async (productoId) => {
+  const enviarResena = async (productoId: number) => {
     setEnviando(true);
     try {
       const response = await fetch(`/api/productos/${productoId}/resenas`, {
@@ -81,7 +93,7 @@ export default function MisResenasPage() {
         })
       });
 
-      const result = await response.json();
+      const result: EnviarResenaResponse = await response.json();
 
       if (result.success) {
         setMostrarFormulario(null);
@@ -90,8 +102,8 @@ export default function MisResenasPage() {
         
         // Recargar reseñas
         const res = await fetch('/api/usuarios/resenas');
-        const data = await res.json();
-        if (data.success) {
+        const data: ResenasApiResponse = await res.json();
+        if (data.success && data.data) {
           setResenas(data.data);
         }
         
@@ -110,7 +122,7 @@ export default function MisResenasPage() {
     }
   };
 
-  const abrirFormularioEdicion = (resena) => {
+  const abrirFormularioEdicion = (resena: ResenaEscrita) => {
     setEditandoResena(resena.id);
     setFormResena({
       puntuacion: resena.puntuacion,
@@ -119,7 +131,7 @@ export default function MisResenasPage() {
     setMostrarFormulario(resena.producto_id);
   };
 
-  const abrirFormularioNuevo = (productoId) => {
+  const abrirFormularioNuevo = (productoId: number) => {
     setEditandoResena(null);
     setFormResena({ puntuacion: 5, comentario: '' });
     setMostrarFormulario(productoId);
@@ -139,7 +151,7 @@ export default function MisResenasPage() {
       </Container>
     );
   }
-console.log('Datos de la primera reseña:', resenas.escritas[0]);
+
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
       <Container>
@@ -153,7 +165,7 @@ console.log('Datos de la primera reseña:', resenas.escritas[0]);
             <h3 className="mb-3" style={{ color: '#2E7D32' }}>Productos pendientes de reseñar</h3>
             <Row className="g-4 mb-5">
               {resenas.pendientes.map((item) => (
-                <Col md={6} key={`${item.producto_id}`}>
+                <Col md={6} key={item.producto_id}>
                   <Card className="border-0 shadow-sm" style={{ borderRadius: '20px' }}>
                     <Card.Body>
                       <div className="d-flex align-items-center">
@@ -371,8 +383,10 @@ console.log('Datos de la primera reseña:', resenas.escritas[0]);
                       <div className="flex-grow-1">
                         <div className="d-flex justify-content-between">
                           <div>
-                            <Link href={`/tienda/${resena.producto_id}`} style={{ color: '#2E7D32', textDecoration: 'none' }}>
-                              <h5>{resena.producto_nombre}</h5>
+                            <Link href={`/tienda/${resena.producto_id}`} passHref>
+                              <span style={{ color: '#2E7D32', textDecoration: 'none', cursor: 'pointer' }}>
+                                <h5>{resena.producto_nombre}</h5>
+                              </span>
                             </Link>
                             {/* PRECIO CON OFERTA SI CORRESPONDE */}
                             <div style={{ fontSize: '0.9rem' }}>

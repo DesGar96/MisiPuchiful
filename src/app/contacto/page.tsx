@@ -3,25 +3,26 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import Image from 'next/image';
+import { ContactoFormData } from '@/types/contacto'; // 👈 IMPORTAMOS EL TIPO DEL FORMULARIO
 
 export default function ContactoPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactoFormData>({
     nombre: '',
     email: '',
     telefono: '',
     mensaje: ''
   });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError('');

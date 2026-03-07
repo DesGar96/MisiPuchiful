@@ -3,7 +3,15 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const ModalConfirmacion = ({ show, onHide, onConfirm, titulo, mensaje }) => {
+const ModalConfirmacion = ({ 
+  show, 
+  onHide, 
+  onConfirm, 
+  titulo, 
+  mensaje, 
+  icono = '❓', // ← AÑADIDO CON VALOR POR DEFECTO
+  textoConfirmacion = 'Sí, vaciar'
+}) => {
   return (
     <Modal
       show={show}
@@ -19,7 +27,7 @@ const ModalConfirmacion = ({ show, onHide, onConfirm, titulo, mensaje }) => {
       </Modal.Header>
       <Modal.Body className="text-center">
         <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>
-          🗑️
+          {icono} {/* ← AHORA USA LA PROP */}
         </span>
         <p style={{ color: '#6B5E4A', fontSize: '1.1rem' }}>
           {mensaje || '¿Estás seguro de realizar esta acción?'}
@@ -52,7 +60,7 @@ const ModalConfirmacion = ({ show, onHide, onConfirm, titulo, mensaje }) => {
             fontWeight: 'bold'
           }}
         >
-          Sí, vaciar
+          {textoConfirmacion}
         </Button>
       </Modal.Footer>
     </Modal>

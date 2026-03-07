@@ -4,15 +4,29 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Button, Spinner, Alert, Form } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Reserva } from '@/types/reserva'; // 👈 IMPORTAMOS TU TIPO
+
+// Extendemos la interfaz para incluir campos adicionales de la API
+interface ReservaAdmin extends Reserva {
+  usuario_nombre?: string;
+  servicio_nombre?: string;
+  mascota_nombre: string;
+}
+
+// Tipo para la notificación
+interface Notificacion {
+  tipo: 'success' | 'danger' | 'warning' | 'info';
+  texto: string;
+}
 
 export default function AdminReservasPage() {
   const router = useRouter();
   const { user, isAdmin } = useAuth();
-  const [reservas, setReservas] = useState([]);
+  const [reservas, setReservas] = useState<ReservaAdmin[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filtro, setFiltro] = useState('todas');
-  const [notificacion, setNotificacion] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [filtro, setFiltro] = useState<string>('todas');
+  const [notificacion, setNotificacion] = useState<Notificacion | null>(null);
 
   useEffect(() => {
     if (!user || !isAdmin()) {
@@ -39,7 +53,7 @@ export default function AdminReservasPage() {
     }
   };
 
-  const cambiarEstado = async (reservaId, nuevoEstado) => {
+  const cambiarEstado = async (reservaId: number, nuevoEstado: string) => {
     try {
       const response = await fetch(`/api/admin/reservas/${reservaId}`, {
         method: 'PATCH',
@@ -53,7 +67,7 @@ export default function AdminReservasPage() {
       if (result.success) {
         setNotificacion({ tipo: 'success', texto: 'Estado actualizado correctamente' });
         fetchReservas();
-        setTimeout(() => setNotificacion(''), 3000);
+        setTimeout(() => setNotificacion(null), 3000);
       } else {
         alert('Error al actualizar');
       }
@@ -62,8 +76,8 @@ export default function AdminReservasPage() {
     }
   };
 
-  const getColorEstado = (estado) => {
-    const colores = {
+  const getColorEstado = (estado: string): string => {
+    const colores: Record<string, string> = {
       pendiente: '#FFD3B6',
       confirmada: '#A8E6CF',
       completada: '#A8E6CF',
@@ -72,8 +86,8 @@ export default function AdminReservasPage() {
     return colores[estado] || '#E8F5E9';
   };
 
-  const getTextoEstado = (estado) => {
-    const textos = {
+  const getTextoEstado = (estado: string): string => {
+    const textos: Record<string, string> = {
       pendiente: '⏳ Pendiente',
       confirmada: '✅ Confirmada',
       completada: '✨ Completada',
@@ -143,8 +157,8 @@ export default function AdminReservasPage() {
             {reservasFiltradas.map((reserva) => (
               <tr key={reserva.id}>
                 <td>#{reserva.id}</td>
-                <td>{reserva.usuario_nombre}</td>
-                <td>{reserva.servicio_nombre}</td>
+                <td>{reserva.usuario_nombre || 'N/A'}</td>
+                <td>{reserva.servicio_nombre || 'N/A'}</td>
                 <td>{reserva.mascota_nombre}</td>
                 <td>{new Date(reserva.fecha_reserva).toLocaleDateString('es-ES')}</td>
                 <td>{reserva.hora_reserva.substring(0,5)}</td>

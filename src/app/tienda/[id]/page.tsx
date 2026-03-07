@@ -8,26 +8,27 @@ import Image from 'next/image';
 import { useCarrito } from '@/context/CarritoContext';
 import { useAuth } from '@/context/AuthContext';
 import { FaStar } from 'react-icons/fa';
+import { ProductoDetalle, ProductoApiResponse } from '@/types/tienda'; // 👈 IMPORTAMOS LOS TIPOS
 
 export default function ProductoPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const { agregarAlCarrito } = useCarrito();
   
-  const [producto, setProducto] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [cantidad, setCantidad] = useState(1);
+  const [producto, setProducto] = useState<ProductoDetalle | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cantidad, setCantidad] = useState<number>(1);
 
   useEffect(() => {
     const fetchProducto = async () => {
       try {
         setLoading(true);
         const response = await fetch(`/api/productos/${id}`);
-        const result = await response.json();
+        const result: ProductoApiResponse = await response.json();
         
-        if (result.success) {
-          setProducto(result.data);
+        if (result.success && result.data) {
+          setProducto(result.data as ProductoDetalle);
         } else {
           setError('Error al cargar el producto');
         }
@@ -42,6 +43,8 @@ export default function ProductoPage() {
   }, [id]);
 
   const handleAgregarAlCarrito = () => {
+    if (!producto) return;
+    
     agregarAlCarrito({
       id: producto.id,
       nombre: producto.nombre,
@@ -102,7 +105,7 @@ export default function ProductoPage() {
                   padding: '0.5rem 1rem',
                   borderRadius: '30px'
                 }}>
-                  {producto.categoria_nombre}
+                  {producto.categoria_nombre || 'Sin categoría'}
                 </Badge>
                 
                 {/* BADGES DE OFERTA Y NOVEDAD */}
@@ -119,7 +122,7 @@ export default function ProductoPage() {
                     </Badge>
                   )}
                   {/* NOVEDAD */}
-                  {producto.es_novedad == 1 && (
+                  {producto.es_novedad === 1 && (
                     <Badge style={{ 
                       backgroundColor: '#A8E6CF',
                       color: '#2E7D32',
@@ -161,7 +164,7 @@ export default function ProductoPage() {
                     <Form.Label style={{ color: '#6B5E4A' }}>Cantidad</Form.Label>
                     <Form.Control
                       type="number"
-                      min="1"
+                      min={1}
                       max={producto.stock}
                       value={cantidad}
                       onChange={(e) => setCantidad(parseInt(e.target.value) || 1)}
@@ -228,7 +231,7 @@ export default function ProductoPage() {
               <h3 className="fw-bold mb-4" style={{ color: '#2E7D32' }}>📝 Reseñas de clientes</h3>
 
               {/* LISTA DE RESEÑAS */}
-              {producto.resenas?.length > 0 ? (
+              {producto.resenas && producto.resenas.length > 0 ? (
                 producto.resenas.map((resena) => (
                   <Card key={resena.id} className="mb-3 border-0" style={{ backgroundColor: '#F8F6F2' }}>
                     <Card.Body>

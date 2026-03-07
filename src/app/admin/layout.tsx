@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import AdminMenu from '@/components/AdminMenu';
 
-export default function AdminLayout({ children }) {
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+
+export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, loading, isAdmin } = useAuth();
   const router = useRouter();
 

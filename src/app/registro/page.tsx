@@ -5,11 +5,12 @@ import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-b
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoginForm from '@/components/LoginForm';
+import { RegistroFormData } from '@/types/registro'; // 👈 IMPORTAMOS EL TIPO
 
 export default function RegistroPage() {
   const router = useRouter();
-  const [showLogin, setShowLogin] = useState(false);
-  const [formData, setFormData] = useState({
+  const [showLogin, setShowLogin] = useState<boolean>(false);
+  const [formData, setFormData] = useState<RegistroFormData>({
     nombre: '',
     email: '',
     password: '',
@@ -17,11 +18,11 @@ export default function RegistroPage() {
     telefono: '',
     direccion: ''
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     // Validación para teléfono (solo números, máximo 9 dígitos)
@@ -34,7 +35,7 @@ export default function RegistroPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -191,7 +192,7 @@ export default function RegistroPage() {
                         value={formData.telefono}
                         onChange={handleChange}
                         required
-                        maxLength="9"
+                        maxLength={9}
                         style={{ borderRadius: '15px', border: '2px solid #E8F5E9' }}
                       />
                       <Form.Text className="text-muted">
