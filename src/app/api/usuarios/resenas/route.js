@@ -16,7 +16,7 @@ export async function GET() {
 
     console.log('🔍 Buscando reseñas para usuario:', usuarioId);
 
-    // Obtener reseñas escritas por el usuario (con datos del producto)
+    // Obtener reseñas escritas por el usuario 
     const [resenas] = await pool.query(`
       SELECT r.*, 
              p.nombre as producto_nombre, 
@@ -24,14 +24,15 @@ export async function GET() {
              p.precio,
              p.precio_oferta,
              p.es_oferta,
-             p.es_novedad
+             p.es_novedad,
+             CASE WHEN r.editada = 1 THEN TRUE ELSE FALSE END as editada
       FROM resenas r
       JOIN productos p ON r.producto_id = p.id
       WHERE r.usuario_id = ?
       ORDER BY r.fecha DESC
     `, [usuarioId]);
 
-    // Obtener productos pendientes de reseñar (con datos del producto)
+    // Obtener productos pendientes de reseñar 
     const [pendientes] = await pool.query(`
       SELECT pc.*, 
              p.nombre as producto_nombre, 

@@ -118,7 +118,7 @@ export async function POST(request, { params }) {
     
     console.log('✅ Reseña insertada con ID:', result.insertId);
     
-    // Marcar el producto como ya reseñado (aunque esto ya no es necesario porque controlamos por existencia)
+    // Marcar el producto como ya reseñado 
     await pool.query(
       `UPDATE productos_comprados SET puede_reseniar = FALSE 
        WHERE usuario_id = ? AND producto_id = ?`,

@@ -354,7 +354,7 @@ const ProductGrid = () => {
         background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
         color: '#6B5E4A',
         padding: '3rem 0',
-        marginBottom: '2rem',
+        marginBottom: 0, /* CAMBIO DE '2rem'*/
         borderRadius: '0 0 50px 50px',
         textAlign: 'center'
       }}>
