@@ -30,49 +30,29 @@ export async function POST(request) {
     // Construir dirección completa
     const direccionCompleta = `${direccion.tipoVia} ${direccion.nombreVia}, nº ${direccion.numeroVia}${direccion.piso ? ', ' + direccion.piso : ''}, ${direccion.codigoPostal} ${direccion.ciudad}`;
 
-    console.log('1. Procesando pedido. Invitado:', invitado);
-    console.log('2. Items:', JSON.stringify(items, null, 2));
-    console.log('3. Email recibido:', email);
-
     // Si es invitado, crear usuario temporal
     if (invitado) {
-      console.log('4. Es invitado, procesando usuario temporal...');
-      
-      // Verificar email
-      if (!email) {
-        return NextResponse.json({ 
-          success: false, 
-          error: 'El email es obligatorio para compras como invitado' 
-        }, { status: 400 });
-      }
-      
       // Buscar si ya existe un usuario con ese email como invitado
       const [usuariosExistentes] = await pool.query(
-        'SELECT id, es_invitado FROM usuarios WHERE email = ?',
+        'SELECT id FROM usuarios WHERE email = ? AND es_invitado = TRUE',
         [email]
       );
-      
-      console.log('5. Usuarios existentes:', usuariosExistentes.length);
 
       if (usuariosExistentes.length > 0) {
         usuarioId = usuariosExistentes[0].id;
-        console.log('6. Usuario existente encontrado. ID:', usuarioId);
       } else {
-        console.log('7. Creando nuevo usuario invitado...');
         // Crear nuevo usuario invitado
         const [result] = await pool.query(
           `INSERT INTO usuarios (nombre, email, telefono, es_invitado, activo) 
-           VALUES (?, ?, ?, ?, ?)`,
-          ['Invitado', email, telefono || null, 1, 1]
+           VALUES (?, ?, ?, TRUE, TRUE)`,
+          ['Invitado', email, telefono]
         );
         usuarioId = result.insertId;
-        console.log('8. Nuevo usuario invitado creado. ID:', usuarioId);
       }
       esInvitado = true;
     } else if (sessionCookie) {
       const sessionData = JSON.parse(sessionCookie.value);
       usuarioId = sessionData.id;
-      console.log('4. Usuario registrado. ID:', usuarioId);
     } else {
       return NextResponse.json({ 
         success: false, 
@@ -80,16 +60,12 @@ export async function POST(request) {
       }, { status: 401 });
     }
 
-    console.log('9. Usuario final ID:', usuarioId);
-    console.log('10. Iniciando transacción...');
-
     // Iniciar transacción
     const connection = await pool.getConnection();
     await connection.beginTransaction();
 
     try {
       // Crear el pedido
-      console.log('11. Insertando pedido...');
       const [pedidoResult] = await connection.query(
         `INSERT INTO pedidos 
          (usuario_id, total, direccion_envio, tipo_via, nombre_via, numero_via, piso, observaciones, metodo_pago, estado) 
@@ -109,39 +85,30 @@ export async function POST(request) {
       );
 
       const pedidoId = pedidoResult.insertId;
-      console.log('12. Pedido insertado. ID:', pedidoId);
 
       // Insertar detalles del pedido y actualizar stock
       for (const item of items) {
-        console.log('13. Procesando item:', item.id);
-        
         await connection.query(
           `INSERT INTO detalle_pedido (pedido_id, producto_id, cantidad, precio_unitario) 
            VALUES (?, ?, ?, ?)`,
           [pedidoId, item.id, item.cantidad, item.precio]
         );
-        console.log('14. Detalle insertado');
 
         await connection.query(
           `UPDATE productos SET stock = stock - ? WHERE id = ?`,
           [item.cantidad, item.id]
         );
-        console.log('15. Stock actualizado');
 
-        const puedeReseniar = !invitado ? 1 : 0;
-        console.log('16. Insertando productos_comprados con puedeReseniar:', puedeReseniar);
-        
+
         await connection.query(
-          `INSERT INTO productos_comprados (usuario_id, producto_id, pedido_id, puede_reseniar) 
-           VALUES (?, ?, ?, ?)`,
-          [usuarioId, item.id, pedidoId, puedeReseniar]
+          `INSERT INTO productos_comprados (usuario_id, producto_id, pedido_id) 
+           VALUES (?, ?, ?)`,
+          [usuarioId, item.id, pedidoId]
         );
-        console.log('17. productos_comprados insertado');
       }
 
       await connection.commit();
       connection.release();
-      console.log('18. Transacción completada con éxito');
 
       return NextResponse.json({ 
         success: true, 
@@ -151,17 +118,16 @@ export async function POST(request) {
       });
 
     } catch (error) {
-      console.error('ERROR EN TRANSACCIÓN:', error);
       await connection.rollback();
       connection.release();
-      throw error; // Lanzamos para que lo capture el catch general
+      throw error;
     }
 
   } catch (error) {
-    console.error('ERROR GENERAL:', error);
+    console.error('Error al procesar pedido:', error);
     return NextResponse.json({ 
       success: false, 
-      error: 'Error al procesar el pedido: ' + error.message 
+      error: 'Error al procesar el pedido' 
     }, { status: 500 });
   }
 }
