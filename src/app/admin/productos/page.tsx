@@ -281,12 +281,13 @@ export default function AdminProductosPage() {
 
                 <td>{p.stock}</td>
 
-                <td>
+                
                   {/* OFERTA - se activa por es_oferta O precio_oferta */}
-                  {p.precio_oferta && p.precio_oferta > 0 && (
-                    <Badge bg="warning">🔥 OFERTA</Badge>
-                  )}
-                </td>
+                   <td>
+                    <div className="d-flex gap-2 flex-wrap">
+                      {p.precio_oferta && p.precio_oferta > 0 && (
+                        <Badge bg="warning" text="dark">🔥 OFERTA</Badge>
+                      )}
                 {/* NOVEDAD - campo es_novedad */}
                 {p.es_novedad === 1 && (
                   <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32' }}>🌱 NOVEDAD</Badge>
@@ -296,7 +297,12 @@ export default function AdminProductosPage() {
                 {p.destacado === 1 && (
                   <Badge bg="info">⭐ DESTACADO</Badge>
                 )}
-                <td>
+                </div>
+                </td>
+
+                 {/* CELDA DE ACCIONES - SOLO LOS BOTONES */}
+                  <td>
+                  <div className="d-flex gap-2">
                   <Button
                     size="sm"
                     className="me-2"
@@ -312,8 +318,9 @@ export default function AdminProductosPage() {
                   >
                     Eliminar
                   </Button>
-                </td>
-              </tr>
+                 </div>
+                  </td>
+                </tr>
             ))}
           </tbody>
         </Table>
