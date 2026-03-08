@@ -21,7 +21,13 @@ export async function GET() {
       ORDER BY fecha_publicacion DESC
     `);
 
-    return NextResponse.json({ success: true, data: posts });
+    // Transformar los datos para que usen fecha_creacion en lugar de fecha_publicacion
+    const postsTransformados = posts.map(post => ({
+      ...post,
+      fecha_creacion: post.fecha_publicacion  // Mapear al nombre que espera el frontend
+    }));
+
+    return NextResponse.json({ success: true, data: postsTransformados });
 
   } catch (error) {
     console.error('Error:', error);
