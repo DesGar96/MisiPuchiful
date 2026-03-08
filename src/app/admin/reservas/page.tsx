@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Button, Spinner, Alert, Form } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { Reserva } from '@/types/reserva'; // 👈 IMPORTAMOS TU TIPO
+import { Reserva } from '@/types/reserva'; 
 
 // Extendemos la interfaz para incluir campos adicionales de la API
 interface ReservaAdmin extends Reserva {
@@ -42,7 +42,10 @@ export default function AdminReservasPage() {
       const response = await fetch('/api/admin/reservas');
       const result = await response.json();
       if (result.success) {
-        setReservas(result.data);
+       const reservasOrdenadas = [...result.data].sort((a, b) => {
+        return new Date(b.fecha_reserva).getTime() - new Date(a.fecha_reserva).getTime();
+      });
+      setReservas(reservasOrdenadas);
       } else {
         setError('Error al cargar reservas');
       }

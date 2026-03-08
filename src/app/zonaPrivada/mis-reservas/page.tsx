@@ -39,10 +39,13 @@ export default function MisReservasPage() {
         const response = await fetch('/api/usuarios/reservas');
         const result: ReservaApiResponse = await response.json();
         if (result.success && result.data) {
-          setReservas(result.data);
-        } else {
-          setError('Error al cargar las reservas');
-        }
+         const reservasOrdenadas = [...result.data].sort((a, b) => {
+          return new Date(b.fecha_reserva).getTime() - new Date(a.fecha_reserva).getTime();
+        });
+        setReservas(reservasOrdenadas);
+      } else {
+        setError('Error al cargar las reservas');
+      }
       } catch (err) {
         setError('Error de conexión');
       } finally {
