@@ -116,7 +116,7 @@ export default function FinalizarCompraPage() {
         setRedirectCountdown(prev => prev - 1);
       }, 1000);
     } else if (success && user && redirectCountdown === 0) {
-      console.log('🔄 Redirigiendo a usuario registrado:', '/zonaPrivada/mis-pedidos');
+      console.log('🔄 Redirigiendo a usuario registrado');
       router.push('/zonaPrivada/mis-pedidos');
     }
     
@@ -249,8 +249,13 @@ export default function FinalizarCompraPage() {
 
   // PANTALLA DE ÉXITO - CON CONDICIONAL PARA INVITADOS Y REGISTRADOS
   if (success) {
+    console.log('🎉 ENTRANDO EN PANTALLA DE ÉXITO');
+    console.log('👤 user:', user);
+    console.log('📦 pedidoId:', pedidoId);
+    
     // Para usuarios NO registrados (invitados)
     if (!user) {
+      console.log('🟢 Mostrando pantalla para INVITADO');
       return (
         <Container className="py-5">
           <Card className="text-center border-0 shadow-lg" style={{ borderRadius: '30px', padding: '3rem' }}>
@@ -269,15 +274,17 @@ export default function FinalizarCompraPage() {
               
               <div className="mt-4">
                 <Link href="/">
-                  <Button style={{ 
-                    backgroundColor: '#A8E6CF', 
-                    borderColor: '#A8E6CF', 
-                    color: '#2E7D32',
-                    borderRadius: '30px',
-                    padding: '0.75rem 2rem',
-                    fontWeight: 'bold',
-                    fontSize: '1.1rem'
-                  }}>
+                  <Button 
+                    style={{ 
+                      backgroundColor: '#A8E6CF', 
+                      borderColor: '#A8E6CF', 
+                      color: '#2E7D32',
+                      borderRadius: '30px',
+                      padding: '0.75rem 2rem',
+                      fontWeight: 'bold',
+                      fontSize: '1.1rem'
+                    }}
+                  >
                     🏠 Volver a Inicio
                   </Button>
                 </Link>
@@ -288,7 +295,8 @@ export default function FinalizarCompraPage() {
       );
     }
     
-    // Para usuarios registrados: mantener el comportamiento actual
+    // Para usuarios registrados
+    console.log('🔵 Mostrando pantalla para REGISTRADO');
     return (
       <Container className="py-5">
         <Card className="text-center border-0 shadow-lg" style={{ borderRadius: '30px', padding: '3rem' }}>
@@ -304,14 +312,16 @@ export default function FinalizarCompraPage() {
               </p>
               
               <Link href="/zonaPrivada/mis-pedidos">
-                <Button style={{ 
-                  backgroundColor: '#A8E6CF', 
-                  borderColor: '#A8E6CF', 
-                  color: '#2E7D32',
-                  borderRadius: '30px',
-                  padding: '0.75rem 2rem',
-                  fontWeight: 'bold'
-                }}>
+                <Button 
+                  style={{ 
+                    backgroundColor: '#A8E6CF', 
+                    borderColor: '#A8E6CF', 
+                    color: '#2E7D32',
+                    borderRadius: '30px',
+                    padding: '0.75rem 2rem',
+                    fontWeight: 'bold'
+                  }}
+                >
                   Ver mis pedidos ahora
                 </Button>
               </Link>
