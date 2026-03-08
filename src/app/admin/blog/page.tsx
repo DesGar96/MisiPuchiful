@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {Container,Table,Button,Badge,Spinner,Alert,Modal,Form
+import {Container,Table,Button,Badge,Spinner,Alert,Modal,Form, Row, Col
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -314,8 +314,86 @@ export default function AdminBlogPage() {
         </Modal.Header>
 
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            {/* el resto del formulario permanece igual */}
+           <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Título</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.titulo}
+                onChange={(e) => setFormData({...formData, titulo: e.target.value})}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Resumen</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                value={formData.resumen}
+                onChange={(e) => setFormData({...formData, resumen: e.target.value})}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Contenido</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={5}
+                value={formData.contenido}
+                onChange={(e) => setFormData({...formData, contenido: e.target.value})}
+                required
+              />
+            </Form.Group>
+
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Categoría</Form.Label>
+                  <Form.Select
+                    value={formData.categoria}
+                    onChange={(e) => setFormData({...formData, categoria: e.target.value})}
+                  >
+                    <option value="general">General</option>
+                    <option value="perros">Perros</option>
+                    <option value="gatos">Gatos</option>
+                    <option value="otras_especies">Otras especies</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>URL de la imagen</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={formData.imagen}
+                    onChange={(e) => setFormData({...formData, imagen: e.target.value})}
+                    placeholder="/imagenes/blog/..."
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Form.Check
+              type="checkbox"
+              label="Activo"
+              checked={formData.activo}
+              onChange={(e) => setFormData({...formData, activo: e.target.checked})}
+              className="mb-3"
+            />
+
+            <div className="d-flex justify-content-end gap-2 mt-4">
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" style={{
+                backgroundColor: '#A8E6CF',
+                borderColor: '#A8E6CF',
+                color: '#2E7D32'
+              }}>
+                Guardar
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>
