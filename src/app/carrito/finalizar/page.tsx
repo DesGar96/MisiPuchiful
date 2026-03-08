@@ -105,23 +105,23 @@ export default function FinalizarCompraPage() {
     }
   };
 
-  // Efecto para la redirección automática
+  // Efecto para la redirección automática (solo usuarios registrados)
   useEffect(() => {
-  console.log('🔄 useEffect redirección - success:', success, 'redirectCountdown:', redirectCountdown, 'user:', user);
-  let timer: NodeJS.Timeout;
-  
-  // Solo para usuarios registrados: redirección automática
-  if (success && user && redirectCountdown > 0) {
-    timer = setTimeout(() => {
-      setRedirectCountdown(prev => prev - 1);
-    }, 1000);
-  } else if (success && user && redirectCountdown === 0) {
-    console.log('🔄 Redirigiendo a usuario registrado:', '/zonaPrivada/mis-pedidos');
-    router.push('/zonaPrivada/mis-pedidos');
-  }
-  
-  return () => clearTimeout(timer);
-}, [success, redirectCountdown, user, router]);
+    console.log('🔄 useEffect redirección - success:', success, 'redirectCountdown:', redirectCountdown, 'user:', user);
+    let timer: NodeJS.Timeout;
+    
+    // Solo para usuarios registrados: redirección automática
+    if (success && user && redirectCountdown > 0) {
+      timer = setTimeout(() => {
+        setRedirectCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (success && user && redirectCountdown === 0) {
+      console.log('🔄 Redirigiendo a usuario registrado:', '/zonaPrivada/mis-pedidos');
+      router.push('/zonaPrivada/mis-pedidos');
+    }
+    
+    return () => clearTimeout(timer);
+  }, [success, redirectCountdown, user, router]);
 
   useEffect(() => {
     if (!user && items.length === 0 && !success) {
@@ -186,7 +186,7 @@ export default function FinalizarCompraPage() {
     }
 
     try {
-        console.log('1. Enviando petición a API...');
+      console.log('1. Enviando petición a API...');
       const response = await fetch('/api/carrito/finalizar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -210,7 +210,7 @@ export default function FinalizarCompraPage() {
       });
       console.log('2. Respuesta recibida. Status:', response.status);
       const result = await response.json();
-       console.log('3. Resultado:', result);
+      console.log('3. Resultado:', result);
 
       if (result.success) {
         console.log('4. Pedido exitoso. ID:', result.pedidoId);
@@ -247,37 +247,72 @@ export default function FinalizarCompraPage() {
     return null;
   }
 
+  // PANTALLA DE ÉXITO - CON CONDICIONAL PARA INVITADOS Y REGISTRADOS
   if (success) {
-  // Si es invitado, mostrar mensaje sin cuenta atrás
-  if (!user) {
+    // Para usuarios NO registrados (invitados)
+    if (!user) {
+      return (
+        <Container className="py-5">
+          <Card className="text-center border-0 shadow-lg" style={{ borderRadius: '30px', padding: '3rem' }}>
+            <Card.Body>
+              <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>✅</div>
+              <h2 style={{ color: '#2E7D32' }}>¡Compra realizada con éxito!</h2>
+              <p style={{ color: '#6B5E4A', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                Número de pedido: <strong>#{pedidoId}</strong>
+              </p>
+              <p style={{ color: '#6B5E4A', marginBottom: '1rem' }}>
+                Hemos enviado un email de confirmación a <strong>{formData.email}</strong> con los detalles de tu compra.
+              </p>
+              <p style={{ color: '#6B5E4A', fontSize: '0.95rem', marginBottom: '2rem' }}>
+                Dirección de envío: {construirDireccionCompleta()}
+              </p>
+              
+              <div className="mt-4">
+                <Link href="/">
+                  <Button style={{ 
+                    backgroundColor: '#A8E6CF', 
+                    borderColor: '#A8E6CF', 
+                    color: '#2E7D32',
+                    borderRadius: '30px',
+                    padding: '0.75rem 2rem',
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem'
+                  }}>
+                    🏠 Volver a Inicio
+                  </Button>
+                </Link>
+              </div>
+            </Card.Body>
+          </Card>
+        </Container>
+      );
+    }
+    
+    // Para usuarios registrados: mantener el comportamiento actual
     return (
       <Container className="py-5">
         <Card className="text-center border-0 shadow-lg" style={{ borderRadius: '30px', padding: '3rem' }}>
           <Card.Body>
             <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>✅</div>
-            <h2 style={{ color: '#2E7D32' }}>¡Compra realizada con éxito!</h2>
-            <p style={{ color: '#6B5E4A', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
-              Número de pedido: <strong>#{pedidoId}</strong>
-            </p>
-            <p style={{ color: '#6B5E4A', marginBottom: '1rem' }}>
-              Hemos enviado un email de confirmación a <strong>{formData.email}</strong> con los detalles de tu compra.
-            </p>
-            <p style={{ color: '#6B5E4A', fontSize: '0.95rem', marginBottom: '2rem' }}>
-              Dirección de envío: {construirDireccionCompleta()}
-            </p>
+            <h2 style={{ color: '#2E7D32' }}>¡Pedido realizado con éxito!</h2>
+            <p style={{ color: '#6B5E4A' }}>Número de pedido: #{pedidoId}</p>
+            <p style={{ color: '#6B5E4A' }}>Dirección de envío: {construirDireccionCompleta()}</p>
             
             <div className="mt-4">
-              <Link href="/">
+              <p style={{ color: '#2E7D32' }}>
+                Redirigiendo a tus pedidos en {redirectCountdown} segundos...
+              </p>
+              
+              <Link href="/zonaPrivada/mis-pedidos">
                 <Button style={{ 
                   backgroundColor: '#A8E6CF', 
                   borderColor: '#A8E6CF', 
                   color: '#2E7D32',
                   borderRadius: '30px',
                   padding: '0.75rem 2rem',
-                  fontWeight: 'bold',
-                  fontSize: '1.1rem'
+                  fontWeight: 'bold'
                 }}>
-                  🏠 Volver a Inicio
+                  Ver mis pedidos ahora
                 </Button>
               </Link>
             </div>
@@ -287,40 +322,7 @@ export default function FinalizarCompraPage() {
     );
   }
 
-  // Para usuarios registrados: mantener la cuenta atrás y redirección
-  return (
-    <Container className="py-5">
-      <Card className="text-center border-0 shadow-lg" style={{ borderRadius: '30px', padding: '3rem' }}>
-        <Card.Body>
-          <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>✅</div>
-          <h2 style={{ color: '#2E7D32' }}>¡Pedido realizado con éxito!</h2>
-          <p style={{ color: '#6B5E4A' }}>Número de pedido: #{pedidoId}</p>
-          <p style={{ color: '#6B5E4A' }}>Dirección de envío: {construirDireccionCompleta()}</p>
-          
-          <div className="mt-4">
-            <p style={{ color: '#2E7D32' }}>
-              Redirigiendo a tus pedidos en {redirectCountdown} segundos...
-            </p>
-            
-            <Link href="/zonaPrivada/mis-pedidos">
-              <Button style={{ 
-                backgroundColor: '#A8E6CF', 
-                borderColor: '#A8E6CF', 
-                color: '#2E7D32',
-                borderRadius: '30px',
-                padding: '0.75rem 2rem',
-                fontWeight: 'bold'
-              }}>
-                Ver mis pedidos ahora
-              </Button>
-            </Link>
-          </div>
-        </Card.Body>
-      </Card>
-    </Container>
-  );
-}
-
+  // PANTALLA PRINCIPAL DEL FORMULARIO
   return (
     <div style={{ backgroundColor: '#F8F6F2', minHeight: '100vh', padding: '3rem 0' }}>
       <Container>
