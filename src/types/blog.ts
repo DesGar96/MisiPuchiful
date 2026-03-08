@@ -7,9 +7,9 @@ export interface BlogPost {
   imagen?: string;
   categoria?: string;
   activo: number; // 1 = activo, 0 = inactivo
-  fecha_publicacion: string;
-  autor?: string; // 👈 AÑADIDO (opcional)
-  autor_id?: number; // 👈 AÑADIDO (opcional)
+  fecha_creacion: string;
+  autor?: string; 
+  autor_id?: number; 
 }
 
 export interface BlogFormData {
@@ -33,7 +33,7 @@ export interface BlogApiResponse {
 export interface BlogAdminPost extends BlogPost {
   autor_nombre?: string;
   total_comentarios?: number;
-  fecha_creacion?: string;
+ // fecha_creacion?: string; viene de blogPost
 }
 
 // Tipos para el formulario de creación/edición (admin)

@@ -22,7 +22,6 @@ export default function PostPage() {
         const result = await response.json();
 
         if (result.success) {
-          console.log('📦 DATOS COMPLETOS:', result.data); // Ver TODO lo que viene
           setPost(result.data);
         } else {
           setError("Error al cargar el artículo");
@@ -115,7 +114,7 @@ export default function PostPage() {
                 borderRadius: '30px'
               }}
             >
-              {formatDate(post.fecha_publicacion)}
+              {formatDate(post.fecha_creacion)}
             </Badge>
           </div>
 

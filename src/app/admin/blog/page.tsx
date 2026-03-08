@@ -234,7 +234,7 @@ export default function AdminBlogPage() {
                   </Badge>
                 </td>
 
-                <td>{formatDate(post.fecha_publicacion)}</td>
+                <td>{formatDate(post.fecha_creacion)}</td>
 
                 <td>
                   {post.activo === 1 ? (
