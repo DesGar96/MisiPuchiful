@@ -43,9 +43,9 @@ export async function POST(request) {
       } else {
         // Crear nuevo usuario invitado
         const [result] = await pool.query(
-          `INSERT INTO usuarios (nombre, email, telefono, es_invitado, activo) 
-           VALUES (?, ?, ?, TRUE, TRUE)`,
-          ['Invitado', email, telefono]
+          `INSERT INTO usuarios (nombre, email, telefono, password, es_invitado, activo) 
+           VALUES (?, ?, ?, ?, TRUE, TRUE)`,
+          ['Invitado', email, telefono || null, 'INVITADO_NO_LOGIN', 1, 1]
         );
         usuarioId = result.insertId;
       }
