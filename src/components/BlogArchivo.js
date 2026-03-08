@@ -151,7 +151,7 @@ const Blog = () => {
       <Container fluid className="px-5">
         <Row>
           {/* Submenú lateral de categorías */}
-          <Col lg={3} className="mb-4" style= "z-index:1;">
+          <Col lg={3} className="mb-4">
             <div className="sticky-top" style={{ top: '100px' }}>
               <Card className="border-0 shadow-sm">
                 <Card.Header className="bg-success text-white py-3">
