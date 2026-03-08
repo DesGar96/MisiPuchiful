@@ -243,7 +243,7 @@ export default function FinalizarCompraPage() {
     return partes.join(', ');
   };
 
-  if (!user && items.length === 0) {
+  if (!success && !user && items.length === 0) {
     return null;
   }
 
@@ -264,9 +264,6 @@ export default function FinalizarCompraPage() {
               <h2 style={{ color: '#2E7D32' }}>¡Compra realizada con éxito!</h2>
               <p style={{ color: '#6B5E4A', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
                 Número de pedido: <strong>#{pedidoId}</strong>
-              </p>
-              <p style={{ color: '#6B5E4A', marginBottom: '1rem' }}>
-                Hemos enviado un email de confirmación a <strong>{formData.email}</strong> con los detalles de tu compra.
               </p>
               <p style={{ color: '#6B5E4A', fontSize: '0.95rem', marginBottom: '2rem' }}>
                 Dirección de envío: {construirDireccionCompleta()}
