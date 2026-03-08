@@ -108,7 +108,7 @@ export default function AdminProductosPage() {
       precio_oferta: producto.precio_oferta
         ? String(producto.precio_oferta)
         : "",
-       destacado: producto.destacado === 1,
+       destacado: producto.destacado === 1, 
       es_novedad: producto.es_novedad === 1,
     });
 
@@ -123,12 +123,24 @@ export default function AdminProductosPage() {
         ? `/api/admin/productos/${productoActual.id}`
         : "/api/admin/productos";
 
+      
       const method = productoActual ? "PUT" : "POST";
 
+      // Determinar es_oferta basado en precio_oferta
+    const tieneOferta = formData.precio_oferta && parseFloat(formData.precio_oferta) > 0;
+
       const dataToSend = {
-        ...formData,
-        precio_oferta: formData.precio_oferta || null,
-      };
+       nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      precio: parseFloat(formData.precio),
+      stock: parseInt(formData.stock),
+      imagen: formData.imagen || null,
+      categoria_id: formData.categoria_id ? parseInt(formData.categoria_id) : null,
+      precio_oferta: tieneOferta ? parseFloat(formData.precio_oferta) : null,
+      destacado: formData.destacado ? 1 : 0,        // Checkbox Destacado
+      es_novedad: formData.es_novedad ? 1 : 0,       // Checkbox Novedad
+      es_oferta: tieneOferta ? 1 : 0,                 // Automatico basado en precio_oferta
+    };
 
       const response = await fetch(url, {
         method,
@@ -140,7 +152,7 @@ export default function AdminProductosPage() {
 
       if (result.success) {
         setShowModal(false);
-        fetchProductos();
+        fetchProductos();// Recargar la lista
       } else {
         alert("Error al guardar");
       }
@@ -270,11 +282,20 @@ export default function AdminProductosPage() {
                 <td>{p.stock}</td>
 
                 <td>
+                  {/* OFERTA - se activa por es_oferta O precio_oferta */}
                   {p.precio_oferta && p.precio_oferta > 0 && (
                     <Badge bg="warning">🔥 OFERTA</Badge>
                   )}
                 </td>
-
+                {/* NOVEDAD - campo es_novedad */}
+                {p.es_novedad === 1 && (
+                  <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32' }}>🌱 NOVEDAD</Badge>
+                )}
+                
+                {/* DESTACADO - (solo informativo, sin badge) */}
+                {p.destacado === 1 && (
+                  <Badge bg="info">⭐ DESTACADO</Badge>
+                )}
                 <td>
                   <Button
                     size="sm"
@@ -312,6 +333,7 @@ export default function AdminProductosPage() {
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
+             {/* Campos básicos */}
             <Form.Group className="mb-3">
               <Form.Label>Nombre</Form.Label>
               <Form.Control
@@ -364,28 +386,47 @@ export default function AdminProductosPage() {
                 type="text"
                 value={formData.imagen}
                 onChange={(e) => setFormData({...formData, imagen: e.target.value})}
+                placeholder="/imagenes/placeholder.jpg"
               />
             </Form.Group>
 
-            <Row>
-              <Col md={6}>
+             {/* SELECTOR DE CATEGORÍA - IMPORTANTE */}
+            <Form.Group className="mb-3">
+              <Form.Label>Categoría</Form.Label>
+              <Form.Select
+                value={formData.categoria_id}
+                onChange={(e) => setFormData({...formData, categoria_id: e.target.value})}
+                required
+              >
+                <option value="">Selecciona una categoría</option>
+                <option value="5">Alimentación</option>
+                <option value="6">Juguetes</option>
+                <option value="7">Higiene</option>
+                <option value="8">Camas y Accesorios</option>
+              </Form.Select>
+            </Form.Group>
+
+             {/* CHECKBOX DE NOVEDAD */}
+              <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
-                  label="Destacado"
-                  checked={formData.destacado}
-                  onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
-                />
-              </Col>
-              <Col md={6}>
-                <Form.Check
-                  type="checkbox"
-                  label="Novedad"
+                  label="🌱 Novedad"
                   checked={formData.es_novedad}
                   onChange={(e) => setFormData({...formData, es_novedad: e.target.checked})}
                 />
-              </Col>
-            </Row>
+              </Form.Group>
 
+              {/* CHECKBOX DE DESTACADO */}
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="checkbox"
+                  label="⭐ Destacado "
+                  checked={formData.destacado}
+                  onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
+                />
+              </Form.Group>
+
+             {/* PRECIO DE OFERTA - activa automáticamente la etiqueta OFERTA */}
             <Form.Group className="mb-3 mt-3">
               <Form.Label>Precio de oferta (si está en oferta)</Form.Label>
               <Form.Control
@@ -396,7 +437,7 @@ export default function AdminProductosPage() {
                 placeholder="Dejar vacío si no está en oferta"
               />
               <Form.Text className="text-muted">
-                Si rellenas este campo, el producto se mostrará como "OFERTA"
+                Si rellenas este campo, el producto se mostrará como "🔥 OFERTA"
               </Form.Text>
             </Form.Group>
 
