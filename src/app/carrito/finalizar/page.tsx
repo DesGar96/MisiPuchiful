@@ -107,12 +107,14 @@ export default function FinalizarCompraPage() {
 
   // Efecto para la redirección automática
   useEffect(() => {
+    console.log('🔄 useEffect redirección - success:', success, 'redirectCountdown:', redirectCountdown);
     let timer: NodeJS.Timeout;
     if (success && redirectCountdown > 0) {
       timer = setTimeout(() => {
         setRedirectCountdown(prev => prev - 1);
       }, 1000);
     } else if (success && redirectCountdown === 0) {
+      console.log('🔄 Redirigiendo a:', user ? '/zonaPrivada/mis-pedidos' : '/');
       router.push(user ? '/zonaPrivada/mis-pedidos' : '/');
     }
     return () => clearTimeout(timer);
@@ -181,6 +183,7 @@ export default function FinalizarCompraPage() {
     }
 
     try {
+        console.log('1. Enviando petición a API...');
       const response = await fetch('/api/carrito/finalizar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -202,20 +205,26 @@ export default function FinalizarCompraPage() {
           esInvitado: !user
         })
       });
-
+      console.log('2. Respuesta recibida. Status:', response.status);
       const result = await response.json();
+       console.log('3. Resultado:', result);
 
       if (result.success) {
+        console.log('4. Pedido exitoso. ID:', result.pedidoId);
         setPedidoId(result.pedidoId);
         setSuccess(true);
         vaciarCarrito();
+        console.log('5. Estado actualizado. success = true');
       } else {
+        console.log('4. Error en respuesta:', result.error);
         setError(result.error || 'Error al procesar el pedido');
       }
     } catch (err) {
+      console.error('ERROR en catch:', err);
       setError('Error de conexión al servidor');
     } finally {
       setLoading(false);
+      console.log('6. Loading = false');
     }
   };
 
