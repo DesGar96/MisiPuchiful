@@ -22,8 +22,7 @@ export default function PostPage() {
         const result = await response.json();
 
         if (result.success) {
-          console.log('📅 Fecha recibida:', result.data.fecha_publicacion);
-        console.log('📅 Tipo:', typeof result.data.fecha_publicacion); //CAMBIOS CONSOLE
+          console.log('📦 DATOS COMPLETOS:', result.data); // Ver TODO lo que viene
           setPost(result.data);
         } else {
           setError("Error al cargar el artículo");
