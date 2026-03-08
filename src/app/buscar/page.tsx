@@ -71,7 +71,8 @@ function BuscarContent() {
       <div style={{ 
         background: 'linear-gradient(135deg, #A8E6CF 0%, #B5EAD7 50%, #C7E9C0 100%)',
         color: '#6B5E4A',
-        padding: 0,
+        padding: '2rem 0',
+        paddingTop: 0,
         marginTop: 0,
         marginBottom: '2rem',
         borderRadius: '0 0 50px 50px',

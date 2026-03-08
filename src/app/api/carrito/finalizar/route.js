@@ -99,10 +99,12 @@ export async function POST(request) {
           [item.cantidad, item.id]
         );
 
+        const puedeReseniar = !invitado ? 1 : 0;
+
         await connection.query(
-          `INSERT INTO productos_comprados (usuario_id, producto_id, pedido_id) 
-           VALUES (?, ?, ?)`,
-          [usuarioId, item.id, pedidoId]
+          `INSERT INTO productos_comprados (usuario_id, producto_id, pedido_id, puede_reseniar) 
+           VALUES (?, ?, ?, ?)`,
+          [usuarioId, item.id, pedidoId, puedeReseniar]
         );
       }
 
