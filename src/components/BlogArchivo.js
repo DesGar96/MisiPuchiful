@@ -130,7 +130,7 @@ const Blog = () => {
 
   return (
     <div className="blog-container">
-      {/* Cabecera atractiva - CON FLUID Y PADDING */}
+      {/* Cabecera  - CON FLUID Y PADDING */}
       <div className="bg-success text-white py-5 mb-4">
         <Container fluid className="px-5">
           <Row className="align-items-center">
@@ -151,7 +151,7 @@ const Blog = () => {
       <Container fluid className="px-5">
         <Row>
           {/* Submenú lateral de categorías */}
-          <Col lg={3} className="mb-4">
+          <Col lg={3} className="mb-4" style= "z-index:1;">
             <div className="sticky-top" style={{ top: '100px' }}>
               <Card className="border-0 shadow-sm">
                 <Card.Header className="bg-success text-white py-3">
@@ -182,7 +182,7 @@ const Blog = () => {
                 </Card.Body>
               </Card>
 
-              {/* ELIMINADO: Widget de redes sociales */}
+              
             </div>
           </Col>
 
