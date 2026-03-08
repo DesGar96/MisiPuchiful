@@ -11,4 +11,6 @@ export interface Producto {
   activo: number
   puntuacion_media?: number
   total_resenas?: number
+  destacado?: number 
+  es_novedad?: number
 }

@@ -37,6 +37,8 @@ export default function AdminProductosPage() {
     imagen: "",
     categoria_id: "",
     precio_oferta: "",
+    destacado: false,
+    es_novedad: false,
   });
 
   useEffect(() => {
@@ -106,6 +108,8 @@ export default function AdminProductosPage() {
       precio_oferta: producto.precio_oferta
         ? String(producto.precio_oferta)
         : "",
+       destacado: producto.destacado === 1,
+      es_novedad: producto.es_novedad === 1,
     });
 
     setShowModal(true);
@@ -171,6 +175,8 @@ export default function AdminProductosPage() {
               imagen: "",
               categoria_id: "",
               precio_oferta: "",
+              destacado: false,
+              es_novedad: false,
             });
             setShowModal(true);
           }}
@@ -292,38 +298,37 @@ export default function AdminProductosPage() {
         </Table>
       </div>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+      {/* Modal de edición/creación */}
+      <Modal 
+        show={showModal} 
+        onHide={() => setShowModal(false)} 
+        size="lg"
+        restoreFocus={false}
+      >
         <Modal.Header closeButton>
-          <Modal.Title>
-            {productoActual ? "Editar Producto" : "Nuevo Producto"}
+          <Modal.Title style={{ color: '#2E7D32' }}>
+            {productoActual ? 'Editar Producto' : 'Nuevo Producto'}
           </Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Nombre</Form.Label>
-
               <Form.Control
                 type="text"
                 value={formData.nombre}
-                onChange={(e) =>
-                  setFormData({ ...formData, nombre: e.target.value })
-                }
+                onChange={(e) => setFormData({...formData, nombre: e.target.value})}
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Descripción</Form.Label>
-
               <Form.Control
                 as="textarea"
                 rows={3}
                 value={formData.descripcion}
-                onChange={(e) =>
-                  setFormData({ ...formData, descripcion: e.target.value })
-                }
+                onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
               />
             </Form.Group>
 
@@ -331,29 +336,22 @@ export default function AdminProductosPage() {
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Precio</Form.Label>
-
                   <Form.Control
                     type="number"
                     step="0.01"
                     value={formData.precio}
-                    onChange={(e) =>
-                      setFormData({ ...formData, precio: e.target.value })
-                    }
+                    onChange={(e) => setFormData({...formData, precio: e.target.value})}
                     required
                   />
                 </Form.Group>
               </Col>
-
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Stock</Form.Label>
-
                   <Form.Control
                     type="number"
                     value={formData.stock}
-                    onChange={(e) =>
-                      setFormData({ ...formData, stock: e.target.value })
-                    }
+                    onChange={(e) => setFormData({...formData, stock: e.target.value})}
                     required
                   />
                 </Form.Group>
@@ -361,40 +359,58 @@ export default function AdminProductosPage() {
             </Row>
 
             <Form.Group className="mb-3">
-              <Form.Label>URL imagen</Form.Label>
-
+              <Form.Label>URL de la imagen</Form.Label>
               <Form.Control
                 type="text"
                 value={formData.imagen}
-                onChange={(e) =>
-                  setFormData({ ...formData, imagen: e.target.value })
-                }
+                onChange={(e) => setFormData({...formData, imagen: e.target.value})}
               />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Precio oferta</Form.Label>
+            <Row>
+              <Col md={6}>
+                <Form.Check
+                  type="checkbox"
+                  label="Destacado"
+                  checked={formData.destacado}
+                  onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
+                />
+              </Col>
+              <Col md={6}>
+                <Form.Check
+                  type="checkbox"
+                  label="Novedad"
+                  checked={formData.es_novedad}
+                  onChange={(e) => setFormData({...formData, es_novedad: e.target.checked})}
+                />
+              </Col>
+            </Row>
 
+            <Form.Group className="mb-3 mt-3">
+              <Form.Label>Precio de oferta (si está en oferta)</Form.Label>
               <Form.Control
                 type="number"
                 step="0.01"
                 value={formData.precio_oferta}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    precio_oferta: e.target.value,
-                  })
-                }
-                placeholder="Vacío si no hay oferta"
+                onChange={(e) => setFormData({...formData, precio_oferta: e.target.value})}
+                placeholder="Dejar vacío si no está en oferta"
               />
+              <Form.Text className="text-muted">
+                Si rellenas este campo, el producto se mostrará como "OFERTA"
+              </Form.Text>
             </Form.Group>
 
             <div className="d-flex justify-content-end gap-2 mt-4">
               <Button variant="secondary" onClick={() => setShowModal(false)}>
                 Cancelar
               </Button>
-
-              <Button type="submit">Guardar</Button>
+              <Button type="submit" style={{
+                backgroundColor: '#A8E6CF',
+                borderColor: '#A8E6CF',
+                color: '#2E7D32'
+              }}>
+                Guardar
+              </Button>
             </div>
           </Form>
         </Modal.Body>
