@@ -16,6 +16,7 @@ import {
   ResenasApiResponse,
   EnviarResenaResponse 
 } from '@/types/resena';
+import { truncate } from 'node:fs';
 
 export default function MisResenasPage() {
   const { user, loading: authLoading } = useAuth();
@@ -65,16 +66,7 @@ export default function MisResenasPage() {
         const result: ResenasApiResponse = await response.json();
         
         if (result.success && result.data) {
-
-        // Convertir editada de 1/0 a booleano
-        const dataConvertida = {
-          escritas: result.data.escritas.map((r: any) => ({
-            ...r,
-            editada: r.editada === 1 || r.editada === true
-          })),
-          pendientes: result.data.pendientes
-        };
-        setResenas(dataConvertida);
+          setResenas(result.data);
         } else {
           setError('Error al cargar las reseñas');
         }
@@ -442,7 +434,7 @@ export default function MisResenasPage() {
                             />
                           ))}
                         </div>
-                        {resena.editada === 1 &&(
+                        {resena.editada === true &&(
                           <Badge style={{ backgroundColor: '#A8E6CF', color: '#2E7D32', fontSize: '0.7rem', marginTop: '0.3rem' }}>
                             ✏️ Editada
                           </Badge>
