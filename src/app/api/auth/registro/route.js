@@ -36,7 +36,7 @@ export async function POST(request) {
     }
     
     // Hashear la contraseña con bcrypt
-    const saltRounds = 10; // Número de rondas de sal (recomendado: 10-12)
+    const saltRounds = 10; 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     
     console.log('🔐 Contraseña hasheada correctamente');
@@ -58,7 +58,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('❌ Error en registro:', error);
     
-    // Manejar errores específicos de MySQL
+    // Manejar errores  MySQL
     if (error.code === 'ER_DUP_ENTRY') {
       return NextResponse.json(
         { error: 'El email ya está registrado' },

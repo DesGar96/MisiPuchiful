@@ -74,7 +74,7 @@ export async function PUT(request) {
       nuevaPassword 
     } = await request.json();
 
-    // Construir dirección completa para el campo legacy
+    // Construir dirección completa 
     const direccionCompleta = direccion || (
       tipo_via && nombre_via && numero_via 
         ? `${tipo_via} ${nombre_via}, nº ${numero_via}${piso ? ', ' + piso : ''}, ${codigo_postal ? 'CP: ' + codigo_postal : ''} ${ciudad || ''}`.trim()

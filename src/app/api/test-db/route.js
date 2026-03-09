@@ -10,15 +10,15 @@ export async function GET() {
   };
 
   try {
-    // PASO 1: Probar conexión
+    //Probar conexión
     const connection = await pool.getConnection();
     resultados.paso1_conexion = true;
     
-    // PASO 2: Verificar tablas
+    //Verificar tablas
     const [tablas] = await connection.query('SHOW TABLES');
     resultados.tablas = tablas.map(t => Object.values(t)[0]);
     
-    // PASO 3: Verificar productos
+    //Verificar productos
     const [productos] = await connection.query('SELECT COUNT(*) as total FROM productos');
     resultados.total_productos = productos[0].total;
     

@@ -27,9 +27,7 @@ const Blog = () => {
     { emoji: '👍', label: 'Me gusta', color: '#0d6efd' },
     { emoji: '❤️', label: 'Me encanta', color: '#dc3545' },
     { emoji: '😄', label: 'Me divierte', color: '#ffc107' },
-    { emoji: '😮', label: 'Me sorprende', color: '#0dcaf0' },
-    { emoji: '😢', label: 'Me entristece', color: '#6c757d' },
-    { emoji: '😡', label: 'Me enfada', color: '#862e2e' }
+    { emoji: '😮', label: 'Me sorprende', color: '#0dcaf0' }
   ];
 
   useEffect(() => {
@@ -86,7 +84,7 @@ const Blog = () => {
             return { 
               ...post, 
               reacciones: result.reacciones,
-              // Actualizar misReacciones (toggle)
+              // Actualizar misReacciones 
               misReacciones: {
                 ...post.misReacciones,
                 [emoji]: !post.misReacciones?.[emoji]
@@ -236,7 +234,7 @@ const Blog = () => {
                               {post.resumen || post.contenido.substring(0, 150) + '...'}
                             </Card.Text>
 
-                            {/* SECCIÓN DE REACCIONES - VERSIÓN COMPLETA CON TOGGLE */}
+                            {/* SECCIÓN DE REACCIONES*/}
                         <div className="border-top pt-3 mt-3">
                         <div className="d-flex flex-wrap align-items-center gap-2">
                             {emojisDisponibles.map(({ emoji, label, color }) => {

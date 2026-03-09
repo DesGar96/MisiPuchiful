@@ -209,7 +209,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Accesibilidad - contraste suficiente */
+/* Accesibilidad - contraste*/
 a, button {
   transition: all 0.3s ease;
 }
@@ -219,7 +219,7 @@ a, button {
   outline-offset: 2px;
 }
 
-/* Mejorar contraste de textos */
+/* Contraste de textos */
 .text-muted {
   color: #9E9E9E !important;
 }
@@ -236,7 +236,7 @@ a, button {
   padding: 0.5rem 1rem;
 }
 
-/* FUERZA BRUTA - QUITAR TODO EL AZUL */
+/* QUITAR TODO EL AZUL */
 a, a:link, a:visited, a:hover, a:active, 
 .nav-link, .nav-link:link, .nav-link:visited,
 .card-title a, .btn-link, .btn-link:link,

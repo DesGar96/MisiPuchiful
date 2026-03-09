@@ -66,7 +66,7 @@ function BuscarContent() {
 
   return (
     <>
-      {/* HEADER FULL WIDTH */}
+      {/* CABECERA */}
       <div
         style={{
           background:

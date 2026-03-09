@@ -35,7 +35,7 @@ const CarruselProductos = () => {
     fetchProductos();
   }, []);
 
-  // Función para dividir array en grupos de 3
+  
   const chunkArray = (arr, size) => {
     return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
       arr.slice(i * size, i * size + size)
@@ -45,8 +45,7 @@ const CarruselProductos = () => {
   const renderCarousel = (productos, titulo, tipo) => {
     if (productos.length === 0) return null;
     
-    const chunks = chunkArray(productos, 3); // 3 productos por slide
-    
+    const chunks = chunkArray(productos, 3); 
     return (
       <div className="mb-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -125,7 +124,6 @@ const CarruselProductos = () => {
           ))}
         </Carousel>
         
-        {/* ELIMINADO: el contador de páginas que estaba aquí */}
       </div>
     );
   };

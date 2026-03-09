@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import CarruselProductos from "@/components/CarruselProductos";
-// Importaciones directas de react-bootstrap (NO desestructuradas)
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,7 +15,7 @@ import CardImg from 'react-bootstrap/CardImg';
 export default function Inicio() {
   return (
     <>
-      {/* HERO SECTION */}
+      {/* PRESENTACION */}
       <section className="hero-section bg-light py-5">
         <Container>
           <Row className="align-items-center min-vh-50">

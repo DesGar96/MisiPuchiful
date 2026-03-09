@@ -9,7 +9,7 @@ const ModalConfirmacion = ({
   onConfirm, 
   titulo, 
   mensaje, 
-  icono = '❓', // ← AÑADIDO CON VALOR POR DEFECTO
+  icono = '❓', 
   textoConfirmacion = 'Sí, vaciar'
 }) => {
   return (
@@ -27,7 +27,7 @@ const ModalConfirmacion = ({
       </Modal.Header>
       <Modal.Body className="text-center">
         <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>
-          {icono} {/* ← AHORA USA LA PROP */}
+          {icono} 
         </span>
         <p style={{ color: '#6B5E4A', fontSize: '1.1rem' }}>
           {mensaje || '¿Estás seguro de realizar esta acción?'}

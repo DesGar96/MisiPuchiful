@@ -24,7 +24,7 @@ export async function GET() {
     // Transformar los datos para que usen fecha_creacion en lugar de fecha_publicacion
     const postsTransformados = posts.map(post => ({
       ...post,
-      fecha_creacion: post.fecha_publicacion  // Mapear al nombre que espera el frontend
+      fecha_creacion: post.fecha_publicacion  
     }));
 
     return NextResponse.json({ success: true, data: postsTransformados });

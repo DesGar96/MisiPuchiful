@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
     '/zonaPrivada/miPerfil',
     '/zonaPrivada/pedidos',
     '/zonaPrivada/resenas',
-    '/miPerfil', // También protegemos /perfil directamente
+    '/miPerfil', 
   ];
   
   // Verificar si la ruta actual está protegida
@@ -28,7 +28,7 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Configurar las rutas donde se ejecutará el middleware
+
 export const config = {
   matcher: [
     '/zonaPrivada/:path*',

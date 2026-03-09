@@ -35,7 +35,7 @@ export async function GET() {
 
     const posts = rows.map(post => {
       let reaccionesPost = {
-        "👍": 0, "❤️": 0, "😄": 0, "😮": 0, "😢": 0, "😡": 0
+        "👍": 0, "❤️": 0, "😄": 0, "😮": 0
       };
       
       try {
@@ -63,7 +63,7 @@ export async function GET() {
         autor: post.autor_nombre || 'Misifú y Puchi',
         reacciones: reaccionesPost,
         misReacciones: reaccionesUsuario[post.id] || {},
-        destacado: post.destacado === 1 || post.destacado === true  // Añadido campo destacado
+        destacado: post.destacado === 1 || post.destacado === true  
       };
     });
 

@@ -32,7 +32,7 @@ export async function GET(request, { params }) {
       }, { status: 404 });
     }
     
-    // Obtener reseñas del producto - IMPORTANTE: usar "resenas" (sin tilde)
+    // Obtener reseñas del producto 
     const [resenas] = await pool.query(`
       SELECT * FROM resenas 
       WHERE producto_id = ? 
@@ -50,7 +50,7 @@ export async function GET(request, { params }) {
       success: true, 
       data: {
         ...productos[0],
-        resenas: resenas,  // IMPORTANTE: usar "resenas" (sin tilde)
+        resenas: resenas,  
         puntuacion_media: puntuacionMedia,
         total_resenas: resenas.length
       }

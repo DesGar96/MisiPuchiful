@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { useCarrito } from '@/context/CarritoContext';
 import { useAuth } from '@/context/AuthContext';
 import { FaStar } from 'react-icons/fa';
-import { ProductoDetalle, ProductoApiResponse } from '@/types/tienda'; // 👈 IMPORTAMOS LOS TIPOS
+import { ProductoDetalle, ProductoApiResponse } from '@/types/tienda'; 
 
 export default function ProductoPage() {
   const { id } = useParams();

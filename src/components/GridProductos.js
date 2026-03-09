@@ -19,7 +19,7 @@ function ProductGridContent() {
   const [error, setError] = useState(null);
   const { agregarAlCarrito } = useCarrito();
 
-  // Categorías principales (de la BD)
+  // Categorías principales (de la BBDD)
   const categoriasPrincipales = [
     { id: 'todos', nombre: '🐾 Todos los productos', icono: '🐾' },
     { id: 'Alimentacion', nombre: '🍖 Alimentacion', icono: '🍖' },
@@ -112,7 +112,7 @@ function ProductGridContent() {
 
   return (
     <>
-      {/* CABECERA - Solo el título*/}
+      {/* CABECERA */}
       <div className="mb-4">
         <h2 className="fw-bold" style={{ color: '#2E7D32', fontSize: '2rem' }}>
           {categoriaActual === 'todos' ? 'Todos los productos' : categoriaActual}

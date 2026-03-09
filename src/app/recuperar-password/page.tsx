@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import LoginForm from '@/components/LoginForm';
-import { RecuperarPasswordFormData } from '@/types/recuperar-password'; // 👈 IMPORTAMOS EL TIPO
+import { RecuperarPasswordFormData } from '@/types/recuperar-password'; 
 
 export default function RecuperarPasswordPage() {
   const router = useRouter();
   const [showLogin, setShowLogin] = useState<boolean>(false);
-  const [step, setStep] = useState<number>(1); // 1: solicitar datos, 2: cambiar contraseña
+  const [step, setStep] = useState<number>(1); 
   const [formData, setFormData] = useState<RecuperarPasswordFormData>({
     email: '',
     telefono: '',
@@ -38,8 +38,7 @@ export default function RecuperarPasswordPage() {
         return;
       }
 
-      // Aquí iría tu lógica de verificación con la API
-      // Por ahora, simulamos verificación exitosa
+      
       setTimeout(() => {
         setStep(2);
         setLoading(false);

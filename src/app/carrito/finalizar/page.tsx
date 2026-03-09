@@ -247,7 +247,7 @@ export default function FinalizarCompraPage() {
     return null;
   }
 
-  // PANTALLA DE ÉXITO - CON CONDICIONAL PARA INVITADOS Y REGISTRADOS
+  // CONDICIONAL PARA INVITADOS Y REGISTRADOS
   if (success) {
     console.log('🎉 ENTRANDO EN PANTALLA DE ÉXITO');
     console.log('👤 user:', user);

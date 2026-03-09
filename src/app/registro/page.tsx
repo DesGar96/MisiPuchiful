@@ -5,7 +5,7 @@ import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-b
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LoginForm from '@/components/LoginForm';
-import { RegistroFormData } from '@/types/registro'; // 👈 IMPORTAMOS EL TIPO
+import { RegistroFormData } from '@/types/registro'; 
 
 export default function RegistroPage() {
   const router = useRouter();

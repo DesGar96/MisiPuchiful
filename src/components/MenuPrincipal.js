@@ -18,7 +18,7 @@ const MenuPrincipal = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout, isAdmin } = useAuth();
-  const { vaciarCarrito } = useCarrito(); // ← IMPORTAMOS vaciarCarrito
+  const { vaciarCarrito } = useCarrito(); 
 
   useEffect(() => {
     setIsBlogPage(pathname?.includes('/blog') || false);
@@ -42,16 +42,16 @@ const MenuPrincipal = () => {
   };
 
   const handleLogout = async () => {
-    // Primero vaciamos el carrito
+    // vaciamos el carrito
     vaciarCarrito();
-    // Luego cerramos sesión
+    // cerramos sesión
     await logout();
     setShowUserMenu(false);
     setExpanded(false);
     router.push('/');
   };
 
-  // ... resto del código igual ...
+  
 
   return (
     <>
@@ -265,7 +265,7 @@ const MenuPrincipal = () => {
 
                     {/* Cerrar sesión - para todos */}
                     <div
-                      onClick={handleLogout}  // ← USAMOS handleLogout en lugar de logout directo
+                      onClick={handleLogout}  
                       className="px-4 py-3"
                       style={{ cursor: 'pointer', color: '#FF8B94', fontWeight: 'bold' }}
                     >

@@ -44,7 +44,7 @@ export default function PerfilPage() {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/usuariosnp/perfil'); // Nota: era /api/usuarios/perfil y lo cambié a /api/usuario/perfil
+      const response = await fetch('/api/usuariosnp/perfil'); 
       const data = await response.json();
       
       if (data.success) {

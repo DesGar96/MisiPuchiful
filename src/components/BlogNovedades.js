@@ -28,9 +28,7 @@ const BlogNovedades = () => {
     { emoji: '👍', label: 'Me gusta' },
     { emoji: '❤️', label: 'Me encanta' },
     { emoji: '😄', label: 'Me divierte' },
-    { emoji: '😮', label: 'Me sorprende' },
-    { emoji: '😢', label: 'Me entristece' },
-    { emoji: '😡', label: 'Me enfada' }
+    { emoji: '😮', label: 'Me sorprende' }
   ];
 
   useEffect(() => {
@@ -332,7 +330,7 @@ const BlogNovedades = () => {
                           </small>
                         </div>
 
-                        {/* TÍTULO - FORZADO A VERDE OSCURO */}
+                        {/* TÍTULO  */}
                         <h3 className="fw-bold mb-3">
                           <Link href={`/blog/${post.id}`} style={{ 
                             textDecoration: 'none',

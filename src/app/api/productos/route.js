@@ -5,7 +5,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const categoria = searchParams.get('categoria');
-    const tipo = searchParams.get('tipo'); // 'perros', 'gatos', 'otras'
+    const tipo = searchParams.get('tipo'); 
 
     let query = `
       SELECT p.*, c.nombre as categoria_nombre 
@@ -21,7 +21,7 @@ export async function GET(request) {
       params.push(categoria);
     }
     
-    // Filtro por tipo (perros/gatos/otras) basado en el nombre del producto o descripción
+    // Filtro por tipo basado en el nombre del producto o descripción
     if (tipo && tipo !== 'todos') {
       if (tipo === 'perros') {
         query += ` AND (p.nombre LIKE '%perro%' OR p.nombre LIKE '%perros%' OR p.descripcion LIKE '%perro%' OR p.descripcion LIKE '%perros%')`;

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Badge } from 'react-bootstrap';
 import { useAuth } from '@/context/AuthContext';
-import { UsuarioPerfil, PerfilFormData, PerfilApiResponse } from '@/types/perfil'; // 👈 IMPORTAMOS LOS TIPOS
+import { UsuarioPerfil, PerfilFormData, PerfilApiResponse } from '@/types/perfil'; 
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -113,7 +113,7 @@ export default function PerfilPage() {
       }
     }
 
-    // Validar teléfono si se proporciona
+    // Validar teléfono 
     if (formData.telefono && formData.telefono.length !== 9) {
       setError('El teléfono debe tener 9 dígitos');
       return;

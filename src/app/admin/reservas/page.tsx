@@ -6,7 +6,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Reserva } from '@/types/reserva'; 
 
-// Extendemos la interfaz para incluir campos adicionales de la API
 interface ReservaAdmin extends Reserva {
   usuario_nombre?: string;
   servicio_nombre?: string;

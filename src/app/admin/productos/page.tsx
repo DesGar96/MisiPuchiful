@@ -397,7 +397,7 @@ export default function AdminProductosPage() {
               />
             </Form.Group>
 
-             {/* SELECTOR DE CATEGORÍA - IMPORTANTE */}
+             {/* SELECTOR DE CATEGORÍA */}
             <Form.Group className="mb-3">
               <Form.Label>Categoría</Form.Label>
               <Form.Select

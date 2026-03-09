@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    // Obtener todos los contactos ordenados por fecha (más recientes primero)
     const [rows] = await pool.query(`
       SELECT * FROM contactos 
       ORDER BY fecha_creacion DESC

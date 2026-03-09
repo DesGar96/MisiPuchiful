@@ -46,7 +46,7 @@ export async function POST(request) {
 
     // Inicializar/parsear reacciones
     let reacciones = {
-      "👍": 0, "❤️": 0, "😄": 0, "😮": 0, "😢": 0, "😡": 0
+      "👍": 0, "❤️": 0, "😄": 0, "😮": 0
     };
 
     if (post[0].reacciones) {
@@ -89,7 +89,7 @@ export async function POST(request) {
 
     console.log('Guardando reacciones:', reacciones);
 
-    // Guardar en BD
+    // Guardar en BBDD
     await pool.query(
       'UPDATE blog_posts SET reacciones = ? WHERE id = ?',
       [JSON.stringify(reacciones), postId]

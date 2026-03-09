@@ -98,7 +98,7 @@ export const CarritoProvider = ({ children }) => {
     agregarAlCarrito,
     eliminarDelCarrito,
     actualizarCantidad,
-    vaciarCarrito,        // ← Añade esta línea (ya existe la función)
+    vaciarCarrito,      
   }}>
     {children}
   </CarritoContext.Provider>
