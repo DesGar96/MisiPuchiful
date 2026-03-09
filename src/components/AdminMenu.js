@@ -13,7 +13,8 @@ const AdminMenu = () => {
   { path: '/admin/blog', icon: '📝', label: 'Blog Posts' },
   { path: '/admin/pedidos', icon: '📋', label: 'Pedidos' },
   { path: '/admin/reservas', icon: '📅', label: 'Reservas' },
-  { path: '/admin/contactos', icon: '📬', label: 'Mensajes' }
+  { path: '/admin/contactos', icon: '📬', label: 'MensajesContactos' }
+  { path: '/admin/crear-admin', icon: '👑', label: 'Crear Administrador' }
 ];
 
   return (
